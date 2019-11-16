@@ -41,19 +41,22 @@ var speedRobot = function(angle){}
 var stopRobot = function(){};
 
 if(process.env.PI === "true"){
-//   const raspi = require('raspi');
+  const raspi = require('raspi');
   const Serial = require('raspi-serial').Serial;
    
   raspi.init(() => {
     var serial = new Serial({portId:"/dev/ttyACM0", baudrate: 9600});
     serial.open(() => {
 	  stopRobot = function() {
+		console.log('speed ' + 0)
         serial.write('speed ' + 0);
       }
       steerRobot = function(angle) {
+		console.log('steer ' + int(clamp_value(angle, -90, 90)))
         serial.write('steer ' + int(clamp_value(angle, -90, 90)));
 	  }
 	  speedRobot = function(angle) {
+        console.log('speed ' + int(clamp_value(angle, -90, 90)));
         serial.write('speed ' + int(clamp_value(angle, -90, 90)));
       }
     });
@@ -242,7 +245,6 @@ io.on
 			function (data)
 			{
 				const steeringAngle = clamp_value(data.payload, -90, 90);
-				console.log("steering: " +steeringAngle);
 				steerRobot(steeringAngle);
 			}
 		);
@@ -252,7 +254,6 @@ io.on
 			function (data)
 			{
 				const speedAngle = clamp_value(data.payload, -90, 90);
-				console.log("speed: " +speedAngle);
 				speedRobot(speedAngle);
 			}
 		);

@@ -1,4 +1,4 @@
-THREEx.ArToolkitContext.baseURL = 'data/'
+THREEx.ArToolkitContext.baseURL = '../data/'
 
 var renderer	= new THREE.WebGLRenderer({
 	antialias: true,
@@ -39,7 +39,7 @@ var arToolkitSource = new THREEx.ArToolkitSource({
 
 	// to read from a video
 	sourceType : 'video',
-	sourceUrl : 'test.mp4',
+	sourceUrl : '../assets/test.mp4',
 
 })
 
@@ -124,11 +124,11 @@ scene.add( mesh );
 
 // Create a material
 var textureLoader = new THREE.TextureLoader();
-var map = textureLoader.load('texture.png');
+var map = textureLoader.load('../assets/texture.png');
 var material = new THREE.MeshPhongMaterial({map: map});
 
 var loader = new THREE.OBJLoader();
-loader.load('stitch.OBJ', function ( object ) {
+loader.load('../assets/stitch.OBJ', function ( object ) {
 
 	// For any meshes in the model, add our material.
 	object.traverse( function ( node ) {

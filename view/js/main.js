@@ -6,6 +6,7 @@ $(document).ready(function() {
       document.body.requestFullscreen();
   }, false);
 
+	var turnAngle	= document.querySelector('.turn-angle');
 	var video  	= document.querySelector('video');
 	var canvas 	= document.querySelector('canvas');
 	var initAlpha, alpha, steeringAngle, speedAngle;
@@ -29,11 +30,13 @@ $(document).ready(function() {
 				video.style.transform = "rotate(" + String(-steeringAngle) + "deg)";
 				canvas.style.transform = "rotate(" + String(-steeringAngle) + "deg)";
 				socket_steering_handler(steeringAngle);
+				turnAngle.textContent = steeringAngle;
 
 			} else {
 				video.style.transform = "rotate(" + String(steeringAngle) + "deg)";
 				canvas.style.transform = "rotate(" + String(steeringAngle) + "deg)";
 				socket_steering_handler(-steeringAngle);
+				turnAngle.textContent = -steeringAngle;
 			}
 		}
 	});

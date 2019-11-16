@@ -47,7 +47,7 @@ if(process.env.PI === "true"){
   try {
 	raspi.init(() => {
 		console.log('connecting to serial port');
-		var serial = new Serial({portId:"/dev/ttyUSB0", baudrate: 74880});
+		var serial = new Serial({portId:"/dev/ttyUSB0", baudrate: 9600});
 		serial.open(() => {
 			console.log('successfully opened serial port!');
 			stopRobot = function() {

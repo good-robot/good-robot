@@ -41,7 +41,7 @@ var speedRobot = function(angle){}
 var stopRobot = function(){};
 
 if(process.env.PI === "true"){
-//   const raspi = require('raspi');
+  const raspi = require('raspi');
   const Serial = require('raspi-serial').Serial;
    
   raspi.init(() => {

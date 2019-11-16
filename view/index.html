@@ -8,14 +8,23 @@
 		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
 	</head>
 
-	<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+	<body id="goFS" style='margin : 0px; overflow: hidden; font-family: Monospace;'>
 		<header>
 			<div class="timebar">
 				<div class="timebar-fill"></div>
+				<span class="turn-angle"></span>
+			</div>
+			<div class="points-wrapper">
 			</div>
 		</header>
 		<main>
-
+			<div class="opponents-wrapper">
+			</div>
+			<div class="speed-control-wrapper">
+				<input class="speed-control" type="range" id="speed" name="speed" min="-100" max="100"/>
+			</div>
+			<div class="action-cards-wrapper">
+			</div>
 		</main>
 
 		<!-- Rendering AR and Video on Canvas -->

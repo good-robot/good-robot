@@ -138,8 +138,8 @@
 		//var mysocket = io();
 		var host_ip = document.location.hostname;
 		var mycanvas = document.getElementById("video-canvas");
-		//var url = "ws://" + host_ip +":8080/socket.io/?EIO=3&transport=websocket";
-		var url = "ws://" + host_ip + ":8080";
+		var url = "ws://" + host_ip +":8080/socket.io/?EIO=3&transport=websocket";
+		var url = "ws://" + host_ip +":8082/";
 		var player = new JSMpeg.Player(url, {canvas: mycanvas});
 		</script>
 	</body>

@@ -48,13 +48,16 @@ if(process.env.PI === "true"){
     var serial = new Serial({portId:"/dev/ttyACM0", baudrate: 9600});
     serial.open(() => {
 	  stopRobot = function() {
-        serial.write('setSpeedAngle' + 0);
+		serial.write('setSpeedAngle');
+		serial.write(0);
       }
       steerRobot = function(angle) {
-        serial.write('setSteeringAngle' + int(clamp_value(angle)));
+        serial.write('setSteeringAngle');
+        serial.write(int(clamp_value(angle)));
 	  }
 	  speedRobot = function(angle) {
-        serial.write('setSpeedAngle' + int(clamp_value(angle)));
+        serial.write('setSpeedAngle');
+        serial.write(int(clamp_value(angle)));
       }
     });
   });

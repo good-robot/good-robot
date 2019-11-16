@@ -244,6 +244,7 @@ io.on
 			"steering",
 			function (data)
 			{
+				console.log('steer ' + data.payload);
 				const steeringAngle = clamp_value(data.payload, -90, 90);
 				steerRobot(steeringAngle);
 			}

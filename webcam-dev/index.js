@@ -7,11 +7,7 @@ var http = require("http").createServer(http_handler);
 //url library. Used to process html url requests
 var url = require("url");
 //Websocket
-// const msgParser = require('socket.io-msgpack-parser');
-// const io = require('socket.io')(http, {
-//   perMessageDeflate: false,
-//   parser: msgParser
-// });
+var io = require("socket.io")(http);
 //Websocket used to stream video
 var websocket = require("ws");
 
@@ -21,7 +17,6 @@ var websocket = require("ws");
 
 //Port the server will listen to
 var server_port = 8080;
-//var websocket_stream_port = 8082;
 var websocket_stream_port = 8082;
 //Path of the http and css files for the http server
 var file_index_name = "index.html";
@@ -35,13 +30,44 @@ var file_jsplayer;
 var stream_name = "mystream";
 
 //-----------------------------------------------------------------------------------
+//	SET UP SERIAL
+//-----------------------------------------------------------------------------------
+
+console.log('ENV: ', process.env.PI)
+process.env.PI = process.env.PI || false;
+
+var steerRobot = function(angle){}
+var speedRobot = function(angle){}
+var stopRobot = function(){};
+
+if(process.env.PI === "true"){
+  const raspi = require('raspi');
+  const Serial = require('raspi-serial').Serial;
+   
+  raspi.init(() => {
+    var serial = new Serial({portId:"/dev/ttyACM0", baudrate: 9600});
+    serial.open(() => {
+	  stopRobot = function() {
+        serial.write('setSpeedAngle' + 0);
+      }
+      steerRobot = function(angle) {
+        serial.write('setSteeringAngle' + int(clamp_value(angle)));
+	  }
+	  speedRobot = function(angle) {
+        serial.write('setSpeedAngle' + int(clamp_value(angle)));
+      }
+    });
+  });
+}
+
+
+//-----------------------------------------------------------------------------------
 //	DETECT SERVER OWN IP
 //-----------------------------------------------------------------------------------
 
 //If just one interface, store the server IP Here
 var server_ip;
 //Get local IP address of the server
-//https://stackoverflow.com/questions/3653065/get-local-ip-address-in-node-js
 var ifaces = os.networkInterfaces();
 
 Object.keys(ifaces).forEach
@@ -145,15 +171,7 @@ function http_handler(req, res)
 			"data",
 			function(data)
 			{
-				//io.broadcast(data);
 				streaming_websocket.broadcast(data);
-				/*
-				if (req.socket.recording)
-				{
-					req.socket.recording.write(data);
-				}
-				*/
-				//console.log("broadcast: ", data.length);
 			}
 		);
 
@@ -184,69 +202,100 @@ function http_handler(req, res)
 //-----------------------------------------------------------------------------------
 //	Handle websocket connection to the client
 
-// io.on
-// (
-// 	"connection",
-// 	function (socket)
-// 	{
-// 		console.log("connecting...");
+io.on
+(
+	"connection",
+	function (socket)
+	{
+		console.log("connecting...");
 
-// 		socket.emit("welcome", { payload: "Server says hello" });
+		socket.emit("welcome", { payload: "Server says hello" });
 
-// 		//Periodically send the current server time to the client in string form
-// 		setInterval
-// 		(
-// 			function()
-// 			{
-// 				socket.emit("server_time", { server_time: get_server_time() });
-// 			},
-// 			//Send every 333ms
-// 			333
-// 		);
+		//Periodically send the current server time to the client in string form
+		setInterval
+		(
+			function()
+			{
+				socket.emit("server_time", { server_time: get_server_time() });
+			},
+			//Send every 333ms
+			333
+		);
 
-// 		socket.on
-// 		(
-// 			"myclick",
-// 			function (data)
-// 			{
-// 				timestamp_ms = get_timestamp_ms();
-// 				socket.emit("profile_ping", { timestamp: timestamp_ms });
-// 				console.log("button event: " +" client says: " +data.payload);
-// 			}
-// 		);
+		socket.on
+		(
+			"myclick",
+			function (data)
+			{
+				timestamp_ms = get_timestamp_ms();
+				socket.emit("profile_ping", { timestamp: timestamp_ms });
+				console.log("button event: " +" client says: " +data.payload);
+			}
+		);
 
-// 		//"ArrowLeft"
-// 		socket.on
-// 		(
-// 			"keyboard",
-// 			function (data)
-// 			{
-// 				timestamp_ms = get_timestamp_ms();
-// 				socket.emit("profile_ping", { timestamp: timestamp_ms });
-// 				console.log("keyboard event: " +" client says: " +data.payload);
-// 			}
-// 		);
+		//////////////////
+		// ROBOT STEERING INTERFACE
+		//////////////////
+		socket.on
+		(
+			"steering",
+			function (data)
+			{
+				const steeringAngle = clamp_value(data.payload, -90, 90);
+				console.log("steering: " +steeringAngle);
+				steerRobot(steeringAngle);
+			}
+		);
+		socket.on
+		(
+			"speed",
+			function (data)
+			{
+				const speedAngle = clamp_value(data.payload, -90, 90);
+				console.log("speed: " +speedAngle);
+				speedRobot(speedAngle);
+			}
+		);
+		socket.on
+		(
+			"stop",
+			function (data)
+			{
+				console.log("STOP!");
+				stopRobot();
+			}
+		);
+		// socket.on
+		// (
+		// 	"keyboard",
+		// 	function (data)
+		// 	{
+		// 		timestamp_ms = get_timestamp_ms();
+		// 		socket.emit("profile_ping", { timestamp: timestamp_ms });
+		// 		console.log("keyboard event: " +" client says: " +data.payload);
+		// 	}
+		// );
 
-// 		//profile packets from the client are answer that allows to compute roundway trip time
-// 		socket.on
-// 		(
-// 			"profile_pong",
-// 			function (data)
-// 			{
-// 				timestamp_ms_pong = get_timestamp_ms();
-// 				timestamp_ms_ping = data.timestamp;
-// 				console.log("Pong received. Round trip time[ms]: " +(timestamp_ms_pong -timestamp_ms_ping));
-// 			}
-// 		);
-// 	}
-// );
+		//profile packets from the client are answer that allows to compute roundway trip time
+		// socket.on
+		// (
+		// 	"profile_pong",
+		// 	function (data)
+		// 	{
+		// 		timestamp_ms_pong = get_timestamp_ms();
+		// 		timestamp_ms_ping = data.timestamp;
+		// 		console.log("Pong received. Round trip time[ms]: " +(timestamp_ms_pong -timestamp_ms_ping));
+		// 	}
+		// );
+	}
+);
 
 //-----------------------------------------------------------------------------------
 //	WEBSOCKET SERVER: STREAMING VIDEO
 //-----------------------------------------------------------------------------------
 
 // Websocket Server
-var streaming_websocket = new websocket.Server({server: http, perMessageDeflate: false});
+var streaming_websocket = new websocket.Server({port: websocket_stream_port, perMessageDeflate: false});
 
 streaming_websocket.connectionCount = 0;
 
@@ -284,42 +333,11 @@ streaming_websocket.broadcast = function(data)
 		{
 			if (client.readyState === websocket.OPEN)
 			{
-				console.log('ws: ', typeof(data))
 				client.send(data);
 			}
 		}
 	);
 };
-
-//BENNY
-// io.on
-// (
-// 	"connection",
-// 	function (socket)
-// 	{
-// 		console.log
-// 		(
-// 			'New io connection: ',
-// 			socket.request.connection.remoteAddress,
-// 			'('+io.engine.clientsCount+" total)"
-// 		);
-
-// 		socket.on
-// 		(
-// 			'disconnect',
-// 			function(reason)
-// 			{
-// 				console.log('Disconnected websocket reason: ' + reason + 'total: ' + io.engine.clientsCount);
-// 			}
-// 		);
-// 	}
-// );
-
-// io.broadcast = function(data)
-// {
-// 	//console.log('io: ', data)
-// 	io.sockets.send(data)
-// }
 
 
 //-----------------------------------------------------------------------------------
@@ -397,6 +415,12 @@ function detect_content( file_name )
 	else
 	{
 		throw "invalid extension";
-
 	}
+}
+
+function clamp_value(value, min, max)
+{
+	if (value > max) return max;
+	if (value < min) return min;
+	return value;
 }

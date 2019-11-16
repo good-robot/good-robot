@@ -47,20 +47,20 @@ if(process.env.PI === "true"){
   try {
 	raspi.init(() => {
 		console.log('connecting to serial port');
-		var serial = new Serial({portId:"/dev/ttyUSB0", baudrate: 9600});
+		var serial = new Serial({portId:"/dev/ttyUSB0", baudrate: 74880});
 		serial.open(() => {
-			console.log('serial.open()');
+			console.log('successfully opened serial port!');
 			stopRobot = function() {
-				console.log('speed ' + 0)
-				serial.write('speed ' + 0);
+				console.log('SER: speed ' + 0 + '\r');
+				serial.write('speed ' + 0 + '\r');
 			}
 			steerRobot = function(angle) {
-				console.log('steer ' + clamp_value(angle, -90, 90))
-				serial.write('steer ' + clamp_value(angle, -90, 90));
+				console.log('SER: steer ' + clamp_value(angle, -90, 90) + '\r');
+				serial.write('steer ' + clamp_value(angle, -90, 90) + '\r');
 			}
 			speedRobot = function(angle) {
-				console.log('speed ' + clamp_value(angle, -90, 90));
-				serial.write('speed ' + clamp_value(angle, -90, 90));
+				console.log('SER: speed ' + clamp_value(angle, -90, 90) + '\r');
+				serial.write('speed ' + clamp_value(angle, -90, 90) + '\r');
 			}
 		});
 	  });

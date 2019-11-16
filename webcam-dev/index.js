@@ -33,7 +33,7 @@ var stream_name = "mystream";
 //	SET UP SERIAL
 //-----------------------------------------------------------------------------------
 
-console.log('ENV: ', process.env.PI)
+console.log('ENV: ', process.env.PI);
 process.env.PI = process.env.PI || false;
 
 var steerRobot = function(angle){}

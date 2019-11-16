@@ -1,212 +1,44 @@
-    THREEx.ArToolkitContext.baseURL = 'data/'
+$(document).ready(function() {
+	var header	= document.querySelector('header');
+	var video  	= document.querySelector('video');
+	var canvas 	= document.querySelector('canvas');
+	var initAlpha, alpha, steeringAngle;
 
-		var renderer	= new THREE.WebGLRenderer({
-			antialias: true,
-			alpha: true
-		});
-		renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-		renderer.setSize( 640, 480 );
-		renderer.domElement.style.position = 'absolute'
-		renderer.domElement.style.top = '0px'
-		renderer.domElement.style.left = '0px'
-		document.body.appendChild( renderer.domElement );
+	window.addEventListener("deviceorientation", function(event) {
+		if (!video || !canvas) {
+			video = document.querySelector('video');
+			canvas = document.querySelector('canvas');
 
-		// array of functions for the rendering loop
-		var onRenderFcts= [];
+		} else {
+			alpha = event.alpha;
 
-		// init scene and camera
-		var scene	= new THREE.Scene();
+			if (initAlpha == undefined) {
+				initAlpha = alpha;
+			}
 
-		//////////////////////////////////////////////////////////////////////////////////
-		//		Initialize a basic camera
-		//////////////////////////////////////////////////////////////////////////////////
+			steeringAngle = parseFloat(alpha) - parseFloat(initAlpha);
 
-		// Create a camera
-		var camera = new THREE.Camera();
-		scene.add(camera);
+			if (steeringAngle > 90) {
 
-		////////////////////////////////////////////////////////////////////////////////
-		//          handle arToolkitSource
-		////////////////////////////////////////////////////////////////////////////////
+				video.style.transform = "rotate(" + String(-steeringAngle) + "deg)";
+				canvas.style.transform = "rotate(" + String(-steeringAngle) + "deg)";
+				socket_steering_handler(steeringAngle);
+				header.textContent = steeringAngle;
 
-		var arToolkitSource = new THREEx.ArToolkitSource({
-			// to read from the webcam
-			// sourceType : 'webcam',
-
-			// // to read from an image
-			// sourceType : 'image',
-			// sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/images/img.jpg',
-
-			// to read from a video
-			sourceType : 'video',
-			sourceUrl : 'test.mp4',
-
-		})
-
-		// arToolkitSource.init(() => {
-		//     rootDiv.appendChild(arToolkitSource.domElement);
-		//     onResize();
-		// });
-		// arToolkitSource.domElement.srcObject = webRTCRemoteStream;
-
-		arToolkitSource.init(function onReady(){
-			onResize()
-		})
-
-		// handle resize
-		window.addEventListener('resize', function(){
-			onResize()
-		})
-		function onResize(){
-			arToolkitSource.onResizeElement()
-			arToolkitSource.copyElementSizeTo(renderer.domElement)
-			if( arToolkitContext.arController !== null ){
-				arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
+			} else {
+				video.style.transform = "rotate(" + String(steeringAngle) + "deg)";
+				canvas.style.transform = "rotate(" + String(steeringAngle) + "deg)";
+				socket_steering_handler(-steeringAngle);
+				header.textContent = -steeringAngle;
 			}
 		}
-		////////////////////////////////////////////////////////////////////////////////
-		//          initialize arToolkitContext
-		////////////////////////////////////////////////////////////////////////////////
+	});
 
+	var time = 0;
+	var timebar = document.querySelector('.timebar-fill');
 
-		// create atToolkitContext
-		var arToolkitContext = new THREEx.ArToolkitContext({
-			// cameraParametersUrl: 'data/camera_para.dat',
-			cameraParametersUrl: THREEx.ArToolkitContext.baseURL + 'data/camera_para.dat',
-			detectionMode: 'mono',
-		})
-		// initialize it
-		arToolkitContext.init(function onCompleted(){
-			// copy projection matrix to camera
-			camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-		})
-
-		// update artoolkit on every frame
-		onRenderFcts.push(function(){
-			if( arToolkitSource.ready === false )	return
-
-			arToolkitContext.update( arToolkitSource.domElement )
-
-			// update scene.visible if the marker is seen
-			scene.visible = camera.visible
-		})
-
-		////////////////////////////////////////////////////////////////////////////////
-		//          Create a ArMarkerControls
-		////////////////////////////////////////////////////////////////////////////////
-
-		// init controls for camera
-		var markerControls = new THREEx.ArMarkerControls(arToolkitContext, camera, {
-			type : 'pattern',
-			patternUrl : THREEx.ArToolkitContext.baseURL + 'data/patt.hiro',
-			// patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.kanji',
-			// as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'
-			changeMatrixMode: 'cameraTransformMatrix'
-		})
-		// as we do changeMatrixMode: 'cameraTransformMatrix', start with invisible scene
-		scene.visible = false
-
-		//////////////////////////////////////////////////////////////////////////////////
-		//		add an object in the scene
-		//////////////////////////////////////////////////////////////////////////////////
-
-		// add a torus knot
-		var geometry	= new THREE.CubeGeometry(1,1,1);
-		var material	= new THREE.MeshNormalMaterial({
-			transparent : true,
-			opacity: 0.5,
-			side: THREE.DoubleSide
-		});
-		var mesh	= new THREE.Mesh( geometry, material );
-		mesh.position.y	= geometry.parameters.height/2
-		scene.add( mesh );
-
-
-		// Create a material
-		var textureLoader = new THREE.TextureLoader();
-		var map = textureLoader.load('texture.png');
-		var material = new THREE.MeshPhongMaterial({map: map});
-
-		var loader = new THREE.OBJLoader();
-		loader.load('stitch.OBJ', function ( object ) {
-
-			// For any meshes in the model, add our material.
-			object.traverse( function ( node ) {
-
-				if ( node.isMesh ) {
-					node.material = material;
-				}
-
-			} );
-
-			object.scale.x = .2
-			object.scale.y = .2
-			object.scale.z = .2
-
-			// object.scale.x = 2
-
-			// Add the model to the scene.
-			scene.add( object );
-
-			onRenderFcts.push(function(delta){
-				object.rotation.y += Math.PI*delta
-			})
-		} );
-
-		//////////////////////////////////////////////////////////////////////////////////
-		//		render the whole thing on the page
-		//////////////////////////////////////////////////////////////////////////////////
-
-		// render the scene
-		onRenderFcts.push(function(){
-			renderer.render( scene, camera );
-		})
-
-		// run the rendering loop
-		var lastTimeMsec= null
-		requestAnimationFrame(function animate(nowMsec){
-			// keep looping
-			requestAnimationFrame( animate );
-			// measure time
-			lastTimeMsec	= lastTimeMsec || nowMsec-1000/60
-			var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec)
-			lastTimeMsec	= nowMsec
-			// call each update function
-			onRenderFcts.forEach(function(onRenderFct){
-				onRenderFct(deltaMsec/1000, nowMsec/1000)
-			})
-    })
-
-		$(document).ready(function() {
-			var header   = document.querySelector('header');
-			var video   = document.querySelector('video');
-			var canvas   = document.querySelector('canvas');
-			var initAlpha
-			window.addEventListener("deviceorientation", function(event) {
-				var alpha = event.alpha
-				if (!initAlpha) {
-					initAlpha = alpha
-				}
-
-				if (!video || !canvas) {
-					video = document.querySelector('video');
-					canvas = document.querySelector('canvas');
-				} else {
-					video.style.transform = "rotate(" + (parseFloat(alpha) - parseFloat(initAlpha)) + "deg)"
-					canvas.style.transform = "rotate(" + (parseFloat(alpha) - parseFloat(initAlpha)) + "deg)"
-				}
-
-				header.textContent = alpha
-
-				// console.log((parseFloat(alpha) - parseFloat(initAlpha)) + "deg")
-			});
-
-			var time = 0;
-			var timebar = document.querySelector('.timebar-fill');
-
-			setInterval(function(){
-				timebar.style.width = (time/60)*100 + "%";
-				time += 1;
-			}, 1000);
-
-	})
+	setInterval(function(){
+		timebar.style.width = (time/60)*100 + "%";
+		time += 1;
+	}, 1000);
+})

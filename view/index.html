@@ -1,24 +1,33 @@
 <!DOCTYPE html>
-<head>
+<html>
+	<head>
+		<title>G00D R0B0T</title>
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="main.css" type="text/css">
+		<script type="text/javascript" src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+	</head>
 
-	<title>Test Gyroscope</title>
-	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-	<link rel="stylesheet" href="main.css" type="text/css">
-</head>
-<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
-	<header>
-		<div class="timebar">
-			<div class="timebar-fill"></div>
-		</div>
-		Test2
-	</header>
+	<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+		<header>
+			<div class="timebar">
+				<div class="timebar-fill"></div>
+			</div>
+		</header>
+		<main>
 
-	<script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
-	<script src='three.min.js'></script>
-	<script src="ar.min.js"></script>
-	<script src="OBJLoader.js"></script>
-	<script src="MTLLoader.js"></script>
-	<script src='gyronorm.complete.min.js'></script>
-	<script src='main.js'></script>
-</body>
+		</main>
+
+		<!-- Rendering AR and Video on Canvas -->
+		<script type="text/javascript" src='three.min.js'></script>
+		<script type="text/javascript" src="ar.min.js"></script>
+		<script type="text/javascript" src="OBJLoader.js"></script>
+		<script type="text/javascript" src="MTLLoader.js"></script>
+		<script type="text/javascript" src='arcanvas.js'></script>
+
+		<!-- Controls -->
+		<script type="text/javascript" src='gyronorm.complete.min.js'></script>
+		<script type="text/javascript" src='control.js'></script>
+		<script type="text/javascript" src='main.js'></script>
+	</body>
 </html>

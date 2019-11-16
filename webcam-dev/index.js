@@ -96,10 +96,10 @@ if(process.env.PI === "true"){
 				else if (ROBOT == ROBOT_ROVER) {
 					if (angle < 0) {
 						console.log('SER: w');
-						serial.write('w')
+						serial.write('s')
 					} else if (angle > 0) {
 						console.log('SER: s');
-						serial.write('s')
+						serial.write('w')
 					}
 				}
 			}

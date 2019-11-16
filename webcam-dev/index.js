@@ -33,7 +33,7 @@ var stream_name = "mystream";
 //	SET UP SERIAL
 //-----------------------------------------------------------------------------------
 
-console.log('ENV: ', process.env.PI)
+console.log('ENV: ', process.env.PI);
 process.env.PI = process.env.PI || false;
 
 var steerRobot = function(angle){}
@@ -41,23 +41,20 @@ var speedRobot = function(angle){}
 var stopRobot = function(){};
 
 if(process.env.PI === "true"){
-  const raspi = require('raspi');
+//   const raspi = require('raspi');
   const Serial = require('raspi-serial').Serial;
    
   raspi.init(() => {
     var serial = new Serial({portId:"/dev/ttyACM0", baudrate: 9600});
     serial.open(() => {
 	  stopRobot = function() {
-		serial.write('setSpeedAngle');
-		serial.write(0);
+        serial.write('speed ' + 0);
       }
       steerRobot = function(angle) {
-        serial.write('setSteeringAngle');
-        serial.write(int(clamp_value(angle)));
+        serial.write('steer ' + int(clamp_value(angle, -90, 90)));
 	  }
 	  speedRobot = function(angle) {
-        serial.write('setSpeedAngle');
-        serial.write(int(clamp_value(angle)));
+        serial.write('speed ' + int(clamp_value(angle, -90, 90)));
       }
     });
   });

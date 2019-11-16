@@ -41,28 +41,35 @@ var speedRobot = function(angle){}
 var stopRobot = function(){};
 
 if(process.env.PI === "true"){
+	console.log('starting up raspi serial.. ')
   const raspi = require('raspi');
   const Serial = require('raspi-serial').Serial;
-   
-  raspi.init(() => {
-    var serial = new Serial({portId:"/dev/ttyACM0", baudrate: 9600});
-    serial.open(() => {
-	  stopRobot = function() {
-		console.log('speed ' + 0)
-        serial.write('speed ' + 0);
-      }
-      steerRobot = function(angle) {
-		console.log('steer ' + int(clamp_value(angle, -90, 90)))
-        serial.write('steer ' + int(clamp_value(angle, -90, 90)));
-	  }
-	  speedRobot = function(angle) {
-        console.log('speed ' + int(clamp_value(angle, -90, 90)));
-        serial.write('speed ' + int(clamp_value(angle, -90, 90)));
-      }
-    });
-  });
+  try {
+	raspi.init(() => {
+		console.log('connecting to serial port');
+		var serial = new Serial({portId:"/dev/ttyACM0", baudrate: 9600});
+		serial.open(() => {
+		  stopRobot = function() {
+			console.log('speed ' + 0)
+			serial.write('speed ' + 0);
+		  }
+		  steerRobot = function(angle) {
+			console.log('steer ' + int(clamp_value(angle, -90, 90)))
+			serial.write('steer ' + int(clamp_value(angle, -90, 90)));
+		  }
+		  speedRobot = function(angle) {
+			console.log('speed ' + int(clamp_value(angle, -90, 90)));
+			serial.write('speed ' + int(clamp_value(angle, -90, 90)));
+		  }
+		});
+	  });
+  } catch (error) {
+	  console.log("ERROR connecting to serial port!");
+	  console.log(error);
+  }
 }
 
+console.log(speedRobot);
 
 //-----------------------------------------------------------------------------------
 //	DETECT SERVER OWN IP

@@ -153,8 +153,6 @@
 			})
 		} );
 
-
-
 		//////////////////////////////////////////////////////////////////////////////////
 		//		render the whole thing on the page
 		//////////////////////////////////////////////////////////////////////////////////
@@ -200,7 +198,15 @@
 
 				header.textContent = alpha
 
-				console.log((parseFloat(alpha) - parseFloat(initAlpha)) + "deg")
+				// console.log((parseFloat(alpha) - parseFloat(initAlpha)) + "deg")
 			});
-			console.log("DEVICE")
+
+			var time = 0;
+			var timebar = document.querySelector('.timebar-fill');
+
+			setInterval(function(){
+				timebar.style.width = (time/60)*100 + "%";
+				time += 1;
+			}, 1000);
+
 	})

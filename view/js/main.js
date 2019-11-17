@@ -47,11 +47,14 @@ $(document).ready(function() {
 
 			if (steeringAngle > 180) {
 				steeringAngle -= 180;
+				if (Math.abs(steeringAngle) < 5) return;
 				video.style.transform = "rotate(" + String(-steeringAngle) + "deg)";
 				canvas.style.transform = "rotate(" + String(-steeringAngle) + "deg)";
 				socket_steering_handler(steeringAngle);
 
 			} else {
+				steeringAngle = steeringAngle < -180 ? steeringAngle + 180 : steeringAngle;
+				if (Math.abs(steeringAngle) < 5) return;
 				video.style.transform = "rotate(" + String(steeringAngle) + "deg)";
 				canvas.style.transform = "rotate(" + String(steeringAngle) + "deg)";
 				socket_steering_handler(-steeringAngle);

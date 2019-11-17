@@ -3,7 +3,7 @@ var os = require("os");
 //file system library. Used to load file stored inside back end server (https://nodejs.org/api/fs.html)
 var fs = require("fs");
 //http system library. Handles basic html requests
-var http = require("http").createServer(http_handler);
+//var http = require("http").createServer(http_handler);
 //url library. Used to process html url requests
 var url = require("url");
 //Websocket used to stream video
@@ -200,142 +200,142 @@ Object.keys(ifaces).forEach
 //	Fetch and serves local files to client
 
 //Create http server and listen to the given port
-http.listen
-(
-	server_port,
-	function( )
-	{
-		console.log('INFO: ' +server_ip +' listening to html requests on port ' +server_port);
-		//Pre-load http, css and js files into memory to improve http request latency
-		file_index = load_file( file_index_name );
-		file_css = load_file( file_css_name );
-		file_jsplayer = load_file( file_jsplayer_name );
-	}
-);
+// http.listen
+// (
+// 	server_port,
+// 	function( )
+// 	{
+// 		console.log('INFO: ' +server_ip +' listening to html requests on port ' +server_port);
+// 		//Pre-load http, css and js files into memory to improve http request latency
+// 		file_index = load_file( file_index_name );
+// 		file_css = load_file( file_css_name );
+// 		file_jsplayer = load_file( file_jsplayer_name );
+// 	}
+// );
 
 //-----------------------------------------------------------------------------------
 //	HTTP REQUESTS HANDLER
 //-----------------------------------------------------------------------------------
 //	Answer to client http requests. Serve http, css and js files
 
-function http_handler(req, res)
-{
-	//If client asks for root
-	if (req.url == '/')
-	{
-		//Request main page
-		res.writeHead( 200, {"Content-Type": detect_content(file_index_name),"Content-Length":file_index.length} );
-		res.write(file_index);
-		res.end();
+// function http_handler(req, res)
+// {
+// 	//If client asks for root
+// 	if (req.url == '/')
+// 	{
+// 		//Request main page
+// 		res.writeHead( 200, {"Content-Type": detect_content(file_index_name),"Content-Length":file_index.length} );
+// 		res.write(file_index);
+// 		res.end();
 
-		console.log("INFO: Serving file: " +req.url);
-	}
-	//If client asks for css file
-	else if (req.url == ("/" +file_css_name))
-	{
-		//Request main page
-		res.writeHead( 200, {"Content-Type": detect_content(file_css_name),"Content-Length" :file_css.length} );
-		res.write(file_css);
-		res.end();
+// 		console.log("INFO: Serving file: " +req.url);
+// 	}
+// 	//If client asks for css file
+// 	else if (req.url == ("/" +file_css_name))
+// 	{
+// 		//Request main page
+// 		res.writeHead( 200, {"Content-Type": detect_content(file_css_name),"Content-Length" :file_css.length} );
+// 		res.write(file_css);
+// 		res.end();
 
-		console.log("INFO: Serving file: " +req.url);
-	}
-	//If client asks for css file
-	else if (req.url == ("/" +file_jsplayer_name))
-	{
-		//Request main page
-		res.writeHead( 200, {"Content-Type": detect_content(file_jsplayer_name),"Content-Length" :file_jsplayer.length} );
-		res.write(file_jsplayer);
-		res.end();
+// 		console.log("INFO: Serving file: " +req.url);
+// 	}
+// 	//If client asks for css file
+// 	else if (req.url == ("/" +file_jsplayer_name))
+// 	{
+// 		//Request main page
+// 		res.writeHead( 200, {"Content-Type": detect_content(file_jsplayer_name),"Content-Length" :file_jsplayer.length} );
+// 		res.write(file_jsplayer);
+// 		res.end();
 
-		console.log("INFO: Serving file: " +req.url);
-	}
-	//Listening to the port the stream from ffmpeg will flow into
-	else if (req.url = "/mystream")
-	{
-		res.connection.setTimeout(0);
+// 		console.log("INFO: Serving file: " +req.url);
+// 	}
+// 	//Listening to the port the stream from ffmpeg will flow into
+// 	else if (req.url = "/mystream")
+// 	{
+// 		res.connection.setTimeout(0);
 
-		console.log( "Stream Connected: " +req.socket.remoteAddress + ":" +req.socket.remotePort );
+// 		console.log( "Stream Connected: " +req.socket.remoteAddress + ":" +req.socket.remotePort );
 
-		req.on
-		(
-			"data",
-			function(data)
-			{
-				streaming_websocket.broadcast(data);
-			}
-		);
+// 		req.on
+// 		(
+// 			"data",
+// 			function(data)
+// 			{
+// 				streaming_websocket.broadcast(data);
+// 			}
+// 		);
 
-		req.on
-		(
-			"end",
-			function()
-			{
-				console.log("local stream has ended");
-				if (req.socket.recording)
-				{
-					req.socket.recording.close();
-				}
-			}
-		);
+// 		req.on
+// 		(
+// 			"end",
+// 			function()
+// 			{
+// 				console.log("local stream has ended");
+// 				if (req.socket.recording)
+// 				{
+// 					req.socket.recording.close();
+// 				}
+// 			}
+// 		);
 
-	}
-	//If client asks for an unhandled path
-	else
-	{
-		res.end();
-		console.log("ERR: Invalid file request" +req.url);
-	}
-}
+// 	}
+// 	//If client asks for an unhandled path
+// 	else
+// 	{
+// 		res.end();
+// 		console.log("ERR: Invalid file request" +req.url);
+// 	}
+// }
 
-//-----------------------------------------------------------------------------------
-//	WEBSOCKET SERVER: STREAMING VIDEO
-//-----------------------------------------------------------------------------------
+// //-----------------------------------------------------------------------------------
+// //	WEBSOCKET SERVER: STREAMING VIDEO
+// //-----------------------------------------------------------------------------------
 
-// Websocket Server
-var streaming_websocket = new websocket.Server({port: websocket_stream_port, perMessageDeflate: false});
+// // Websocket Server
+// var streaming_websocket = new websocket.Server({port: websocket_stream_port, perMessageDeflate: false});
 
-streaming_websocket.connectionCount = 0;
+// streaming_websocket.connectionCount = 0;
 
-streaming_websocket.on
-(
-	"connection",
-	function(socket, upgradeReq)
-	{
-		streaming_websocket.connectionCount++;
-		console.log
-		(
-			'New websocket Connection: ',
-			(upgradeReq || socket.upgradeReq).socket.remoteAddress,
-			(upgradeReq || socket.upgradeReq).headers['user-agent'],
-			'('+streaming_websocket.connectionCount+" total)"
-		);
+// streaming_websocket.on
+// (
+// 	"connection",
+// 	function(socket, upgradeReq)
+// 	{
+// 		streaming_websocket.connectionCount++;
+// 		console.log
+// 		(
+// 			'New websocket Connection: ',
+// 			(upgradeReq || socket.upgradeReq).socket.remoteAddress,
+// 			(upgradeReq || socket.upgradeReq).headers['user-agent'],
+// 			'('+streaming_websocket.connectionCount+" total)"
+// 		);
 
-		socket.on
-		(
-			'close',
-			function(code, message)
-			{
-				streaming_websocket.connectionCount--;
-				console.log('Disconnected websocket ('+streaming_websocket.connectionCount+' total)');
-			}
-		);
-	}
-);
+// 		socket.on
+// 		(
+// 			'close',
+// 			function(code, message)
+// 			{
+// 				streaming_websocket.connectionCount--;
+// 				console.log('Disconnected websocket ('+streaming_websocket.connectionCount+' total)');
+// 			}
+// 		);
+// 	}
+// );
 
-streaming_websocket.broadcast = function(data)
-{
-	streaming_websocket.clients.forEach
-	(
-		function each(client)
-		{
-			if (client.readyState === websocket.OPEN)
-			{
-				client.send(data);
-			}
-		}
-	);
-};
+// streaming_websocket.broadcast = function(data)
+// {
+// 	streaming_websocket.clients.forEach
+// 	(
+// 		function each(client)
+// 		{
+// 			if (client.readyState === websocket.OPEN)
+// 			{
+// 				client.send(data);
+// 			}
+// 		}
+// 	);
+// };
 
 
 //-----------------------------------------------------------------------------------

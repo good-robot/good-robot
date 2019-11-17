@@ -6,8 +6,6 @@ var fs = require("fs");
 var http = require("http").createServer(http_handler);
 //url library. Used to process html url requests
 var url = require("url");
-//Websocket
-var io = require("socket.io")(http);
 //Websocket used to stream video
 var websocket = require("ws");
 
@@ -38,7 +36,6 @@ const ROBOT_GOOD = 'good'
 
 console.log('ENV: ', process.env.PI);
 process.env.PI = process.env.PI || false;
-
 
 const ROBOT = process.env.ROBOT || ROBOT_GOOD; 
 let SERIAL_ID
@@ -112,6 +109,103 @@ if(process.env.PI === "true"){
 }
 
 console.log(speedRobot);
+
+//-----------------------------------------------------------------------------------
+//	WEBSOCKET SERVER: CONTROL/FEEDBACK REQUESTS
+//-----------------------------------------------------------------------------------
+//	Handle websocket connection to the client
+const i = require('socket.io-client');
+const io = i('https://goodrobot.live', {
+  path: '/ws'
+});
+
+io.on
+(
+	"connection",
+	function (socket)
+	{
+		console.log("connecting...");
+
+		socket.emit("welcome", { payload: "Server says hello" });
+
+		//Periodically send the current server time to the client in string form
+		setInterval
+		(
+			function()
+			{
+				socket.emit("server_time", { server_time: get_server_time() });
+			},
+			//Send every 333ms
+			333
+		);
+
+		socket.on
+		(
+			"myclick",
+			function (data)
+			{
+				timestamp_ms = get_timestamp_ms();
+				socket.emit("profile_ping", { timestamp: timestamp_ms });
+				console.log("button event: " +" client says: " +data.payload);
+			}
+		);
+
+		//////////////////
+		// ROBOT STEERING INTERFACE
+		//////////////////
+		socket.on
+		(
+			"steering",
+			function (data)
+			{
+				console.log('steer ' + data.payload);
+				const steeringAngle = clamp_value(data.payload, -90, 90);
+				steerRobot(steeringAngle);
+			}
+		);
+		socket.on
+		(
+			"speed",
+			function (data)
+			{
+				const speedAngle = clamp_value(data.payload, -90, 90);
+				speedRobot(speedAngle);
+			}
+		);
+		socket.on
+		(
+			"stop",
+			function (data)
+			{
+				console.log("STOP!");
+				stopRobot();
+			}
+		);
+		// socket.on
+		// (
+		// 	"keyboard",
+		// 	function (data)
+		// 	{
+		// 		timestamp_ms = get_timestamp_ms();
+		// 		socket.emit("profile_ping", { timestamp: timestamp_ms });
+		// 		console.log("keyboard event: " +" client says: " +data.payload);
+		// 	}
+		// );
+
+		//profile packets from the client are answer that allows to compute roundway trip time
+		// socket.on
+		// (
+		// 	"profile_pong",
+		// 	function (data)
+		// 	{
+		// 		timestamp_ms_pong = get_timestamp_ms();
+		// 		timestamp_ms_ping = data.timestamp;
+		// 		console.log("Pong received. Round trip time[ms]: " +(timestamp_ms_pong -timestamp_ms_ping));
+		// 	}
+		// );
+	}
+);
+
 
 //-----------------------------------------------------------------------------------
 //	DETECT SERVER OWN IP
@@ -248,98 +342,6 @@ function http_handler(req, res)
 		console.log("ERR: Invalid file request" +req.url);
 	}
 }
-
-//-----------------------------------------------------------------------------------
-//	WEBSOCKET SERVER: CONTROL/FEEDBACK REQUESTS
-//-----------------------------------------------------------------------------------
-//	Handle websocket connection to the client
-
-io.on
-(
-	"connection",
-	function (socket)
-	{
-		console.log("connecting...");
-
-		socket.emit("welcome", { payload: "Server says hello" });
-
-		//Periodically send the current server time to the client in string form
-		setInterval
-		(
-			function()
-			{
-				socket.emit("server_time", { server_time: get_server_time() });
-			},
-			//Send every 333ms
-			333
-		);
-
-		socket.on
-		(
-			"myclick",
-			function (data)
-			{
-				timestamp_ms = get_timestamp_ms();
-				socket.emit("profile_ping", { timestamp: timestamp_ms });
-				console.log("button event: " +" client says: " +data.payload);
-			}
-		);
-
-		//////////////////
-		// ROBOT STEERING INTERFACE
-		//////////////////
-		socket.on
-		(
-			"steering",
-			function (data)
-			{
-				console.log('steer ' + data.payload);
-				const steeringAngle = clamp_value(data.payload, -90, 90);
-				steerRobot(steeringAngle);
-			}
-		);
-		socket.on
-		(
-			"speed",
-			function (data)
-			{
-				const speedAngle = clamp_value(data.payload, -90, 90);
-				speedRobot(speedAngle);
-			}
-		);
-		socket.on
-		(
-			"stop",
-			function (data)
-			{
-				console.log("STOP!");
-				stopRobot();
-			}
-		);
-		// socket.on
-		// (
-		// 	"keyboard",
-		// 	function (data)
-		// 	{
-		// 		timestamp_ms = get_timestamp_ms();
-		// 		socket.emit("profile_ping", { timestamp: timestamp_ms });
-		// 		console.log("keyboard event: " +" client says: " +data.payload);
-		// 	}
-		// );
-
-		//profile packets from the client are answer that allows to compute roundway trip time
-		// socket.on
-		// (
-		// 	"profile_pong",
-		// 	function (data)
-		// 	{
-		// 		timestamp_ms_pong = get_timestamp_ms();
-		// 		timestamp_ms_ping = data.timestamp;
-		// 		console.log("Pong received. Round trip time[ms]: " +(timestamp_ms_pong -timestamp_ms_ping));
-		// 	}
-		// );
-	}
-);
 
 //-----------------------------------------------------------------------------------
 //	WEBSOCKET SERVER: STREAMING VIDEO

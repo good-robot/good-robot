@@ -1,15 +1,29 @@
 var ROUND_TIME = 30;
 
-$(document).ready(function() {
-  var goFS = document.getElementById("goFS");
-  goFS.addEventListener("click", function() {
-      document.body.requestFullscreen();
-  }, false);
+function animateCSS(element, animationName, callback) {
+	const node = document.querySelector(element)
+	node.classList.add('animated', animationName)
 
-	var turnAngle	= document.querySelector('.turn-angle');
+	function handleAnimationEnd() {
+			node.classList.remove('animated', animationName)
+			node.removeEventListener('animationend', handleAnimationEnd)
+
+			if (typeof callback === 'function') callback()
+	}
+
+	node.addEventListener('animationend', handleAnimationEnd)
+}
+
+animateCSS('body', 'fadeInUp');
+
+var username = localStorage.getItem("name");
+
+$(document).ready(function() {
 	var video  	= document.querySelector('video');
 	var canvas 	= document.querySelector('canvas');
 	var initAlpha, alpha, steeringAngle, speedAngle;
+
+	console.log(username)
 
 	window.addEventListener("deviceorientation", function(event) {
 		if (!video || !canvas) {
@@ -30,13 +44,11 @@ $(document).ready(function() {
 				video.style.transform = "rotate(" + String(-steeringAngle) + "deg)";
 				canvas.style.transform = "rotate(" + String(-steeringAngle) + "deg)";
 				socket_steering_handler(steeringAngle);
-				turnAngle.textContent = steeringAngle;
 
 			} else {
 				video.style.transform = "rotate(" + String(steeringAngle) + "deg)";
 				canvas.style.transform = "rotate(" + String(steeringAngle) + "deg)";
 				socket_steering_handler(-steeringAngle);
-				turnAngle.textContent = -steeringAngle;
 			}
 		}
 	});

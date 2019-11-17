@@ -31,15 +31,15 @@ scene.add(camera);
 
 var arToolkitSource = new THREEx.ArToolkitSource({
 	// to read from the webcam
-	// sourceType : 'webcam',
+	sourceType : 'webcam',
 
 	// // to read from an image
 	// sourceType : 'image',
 	// sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/images/img.jpg',
 
 	// to read from a video
-	sourceType : 'video',
-	sourceUrl : '../assets/test.mp4',
+	// sourceType : 'video',
+	// sourceUrl : '../assets/test.mp4',
 
 })
 
@@ -98,7 +98,7 @@ onRenderFcts.push(function(){
 // init controls for camera
 var markerControls = new THREEx.ArMarkerControls(arToolkitContext, camera, {
 	type : 'pattern',
-	patternUrl : THREEx.ArToolkitContext.baseURL + 'data/patt.hiro',
+	patternUrl : THREEx.ArToolkitContext.baseURL + 'data/patt.kanji',
 	// patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.kanji',
 	// as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'
 	changeMatrixMode: 'cameraTransformMatrix'

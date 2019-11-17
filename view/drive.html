@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>G00D R0B0T</title>
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link href="https://fonts.googleapis.com/css?family=Bebas+Neue&display=swap" rel="stylesheet">
+		<script type="text/javascript" src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+		<link rel="stylesheet" href="main.css" type="text/css">
+	</head>
+
+	<body style='margin : 0px; overflow: hidden;'>
+		<header>
+			<div class="timebar">
+				<div class="timebar-fill"></div>
+			</div>
+			<div class="points-wrapper">0</div>
+		</header>
+		<main>
+			<div class="opponents-wrapper">
+				<picture class="opponent-picture">
+					<img class="opponent-picture-image" src="assets/greta.png">
+				</picture>
+				<picture class="opponent-picture">
+					<img class="opponent-picture-image" src="assets/leo.png">
+				</picture>
+				<picture class="opponent-picture">
+					<img class="opponent-picture-image" src="assets/lady.png">
+				</picture>
+			</div>
+			<div class="speed-control-wrapper">
+				<input class="speed-control" type="range" id="speed" name="speed" min="-100" max="100"/>
+			</div>
+			<div class="action-cards-wrapper">
+				<img class="action-card action-card--selected" src="assets/card-orange.png">
+				<img class="action-card" src="assets/card-purple.png">
+			</div>
+		</main>
+
+		<!-- Rendering AR and Video on Canvas -->
+		<script type="text/javascript" src='js/three.min.js'></script>
+		<script type="text/javascript" src="js/ar.min.js"></script>
+		<script type="text/javascript" src="js/OBJLoader.js"></script>
+		<script type="text/javascript" src="js/MTLLoader.js"></script>
+		<script type="text/javascript" src='js/arcanvas.js'></script>
+
+		<!-- Controls -->
+		<script type="text/javascript" src='js/gyronorm.complete.min.js'></script>
+		<script type="text/javascript" src='js/control.js'></script>
+		<script type="text/javascript" src='js/main.js'></script>
+	</body>
+</html>

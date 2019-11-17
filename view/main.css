@@ -89,6 +89,7 @@ h2 {
 	width: 150px;
 	border: 0;
 	font-size: 1.666rem;
+	outline: none;
 	cursor: pointer;
 	text-transform: uppercase;
 	padding-top: 5px;
@@ -270,4 +271,15 @@ main {
 
 .modal-backdrop, .bootbox {
 	display: none !important;
+}
+
+audio {
+	position: absolute;
+	bottom: 0;
+	opacity: .3;
+	transition: opacity .3s ease;
+}
+
+audio:hover {
+	opacity: 1;
 }

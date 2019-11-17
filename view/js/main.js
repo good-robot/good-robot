@@ -1,6 +1,7 @@
 var ROUND_TIME = 30;
 var collected = 0;
 var $points = $('.points-wrapper');
+var $speedControl = $(".speed-control");
 
 function animateCSS(element, animationName, callback) {
 	var node = document.querySelector(element)
@@ -58,11 +59,33 @@ $(document).ready(function() {
 		}
 	});
 
-	$(".speed-control").on("input change", function(e) {
+	$speedControl.on("input change", function(e) {
 		speedAngle = parseInt($(this).val()) * 0.5;
 		socket_speed_handler(speedAngle);
 		window.navigator.vibrate(Math.abs(speedAngle) * 10);
 	})
+
+	var dragging = false;
+
+	$speedControl.on("mousedown", function () {
+		dragging = true;
+	});
+
+	$speedControl.on("mouseup", function () {
+		dragging = false;
+	});
+
+	setInterval(function(){
+		if (dragging) return;
+		var speed = parseInt($speedControl.val());
+		if (speed > 0) {
+			speed = (speed - 12) < 0 ? 0 : (speed - 12);
+		} else {
+			speed = (speed + 12) > 0 ? 0 : (speed + 12);
+		}
+
+		$speedControl.val(speed);
+	}, 1000);
 
 	var time = 0;
 	var timebar = document.querySelector('.timebar-fill');

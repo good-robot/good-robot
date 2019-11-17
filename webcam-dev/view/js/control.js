@@ -1,6 +1,7 @@
-var host_ip = document.location.hostname;
+var host_ip = "10.84.114.40"; //document.location.hostname;
 // host_ip = "localhost"
-console.log("connecting to host: ", host_ip);
+console.log(host_ip);
+console.log("connecting to host: " + host_ip);
 
 //Connect to the server via websocket
 var mysocket = io("https://" +host_ip +":8080");

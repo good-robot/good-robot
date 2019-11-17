@@ -22,14 +22,10 @@ var websocket_stream_port = 8082;
 var file_index_name = "index.html";
 var file_css_name = "style.css";
 var file_jsplayer_name = "jsmpeg.min.js";
-// var view_file_index_name = "view/index.html";
-var js_file_name = "main.js";
 //Http and css files loaded into memory for fast access
 var file_index;
 var file_css;
 var file_jsplayer;
-// var view_file_index;
-var js_file;
 //Name of the local video stream
 var stream_name = "mystream";
 
@@ -37,33 +33,85 @@ var stream_name = "mystream";
 //	SET UP SERIAL
 //-----------------------------------------------------------------------------------
 
+const ROBOT_ROVER = 'rover'
+const ROBOT_GOOD = 'good'
+
 console.log('ENV: ', process.env.PI);
 process.env.PI = process.env.PI || false;
+
+
+const ROBOT = process.env.ROBOT || ROBOT_GOOD; 
+let SERIAL_ID
+
+if (ROBOT == ROBOT_GOOD) SERIAL_ID = "/dev/ttyUSB0"
+else if (ROBOT == ROBOT_ROVER) SERIAL_ID = "/dev/ttyACM0"
+
+console.log("Have fun driving the " + ROBOT + " robot!");
 
 var steerRobot = function(angle){}
 var speedRobot = function(angle){}
 var stopRobot = function(){};
 
-if(process.env.PI === "true"){
-//   const raspi = require('raspi');
-  const Serial = require('raspi-serial').Serial;
 
-  raspi.init(() => {
-    var serial = new Serial({portId:"/dev/ttyACM0", baudrate: 9600});
-    serial.open(() => {
-	  stopRobot = function() {
-        serial.write('speed ' + 0);
-      }
-      steerRobot = function(angle) {
-        serial.write('steer ' + int(clamp_value(angle, -90, 90)));
-	  }
-	  speedRobot = function(angle) {
-        serial.write('speed ' + int(clamp_value(angle, -90, 90)));
-      }
-    });
-  });
+if(process.env.PI === "true"){
+	console.log('starting up raspi serial.. ')
+  const raspi = require('raspi');
+  const Serial = require('raspi-serial').Serial;
+  try {
+	raspi.init(() => {
+		console.log('connecting to serial port: ' + SERIAL_ID);
+		var serial = new Serial({portId: SERIAL_ID, baudrate: 9600});
+		serial.open(() => {
+			console.log('successfully opened serial port to ' + ROBOT);
+			stopRobot = function() {
+				if (ROBOT == ROBOT_GOOD) {
+					console.log('SER: speed ' + 0 + '\r');
+					serial.write('speed ' + 0 + '\r');
+				}
+				else if (ROBOT == ROBOT_ROVER) {
+					console.log('SER: x');
+					serial.write('x')
+				}
+			}
+			steerRobot = function(angle) {
+				if (ROBOT == ROBOT_GOOD) {
+					console.log('SER: steer ' + clamp_value(angle, -90, 90) + '\r');
+					serial.write('steer ' + clamp_value(angle, -90, 90) + '\r');
+				}
+				else if (ROBOT == ROBOT_ROVER) {
+					if (angle < 0) {
+						console.log('SER: a');
+						serial.write('a')
+					} else if (angle > 0) {
+						console.log('SER: d');
+						serial.write('d')
+					}
+				}
+			}
+			speedRobot = function(angle) {
+				if (ROBOT == ROBOT_GOOD) {
+					console.log('SER: speed ' + clamp_value(angle, -90, 90) + '\r');
+					serial.write('speed ' + clamp_value(angle, -90, 90) + '\r');
+				}
+				else if (ROBOT == ROBOT_ROVER) {
+					if (angle < 0) {
+						console.log('SER: w');
+						serial.write('s')
+					} else if (angle > 0) {
+						console.log('SER: s');
+						serial.write('w')
+					}
+				}
+			}
+		});
+	  });
+  } catch (error) {
+	  console.log("ERROR connecting to serial port!");
+	  console.log(error);
+  }
 }
 
+console.log(speedRobot);
 
 //-----------------------------------------------------------------------------------
 //	DETECT SERVER OWN IP
@@ -123,8 +171,6 @@ http.listen
 		file_index = load_file( file_index_name );
 		file_css = load_file( file_css_name );
 		file_jsplayer = load_file( file_jsplayer_name );
-		// view_file_index = load_file( view_file_index_name );
-		js_file = load_file( js_file_name );
 	}
 );
 
@@ -161,15 +207,6 @@ function http_handler(req, res)
 		//Request main page
 		res.writeHead( 200, {"Content-Type": detect_content(file_jsplayer_name),"Content-Length" :file_jsplayer.length} );
 		res.write(file_jsplayer);
-		res.end();
-
-		console.log("INFO: Serving file: " +req.url);
-	}
-	else if (req.url == ("/" +js_file_name))
-	{
-		//Request main page
-		res.writeHead( 200, {"Content-Type": detect_content(js_file_name),"Content-Length" :js_file.length} );
-		res.write(js_file);
 		res.end();
 
 		console.log("INFO: Serving file: " +req.url);
@@ -256,8 +293,8 @@ io.on
 			"steering",
 			function (data)
 			{
+				console.log('steer ' + data.payload);
 				const steeringAngle = clamp_value(data.payload, -90, 90);
-				console.log("steering: " +steeringAngle);
 				steerRobot(steeringAngle);
 			}
 		);
@@ -267,7 +304,6 @@ io.on
 			function (data)
 			{
 				const speedAngle = clamp_value(data.payload, -90, 90);
-				console.log("speed: " +speedAngle);
 				speedRobot(speedAngle);
 			}
 		);

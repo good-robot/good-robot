@@ -19,6 +19,7 @@ server.listen(http_port, () =>
 app.use(express.static('public'))
 
 app.get('/', (req, res) => {
+    console.log('got a hit');
     res.send(404);
 });
 
@@ -38,6 +39,7 @@ Date.prototype.timeNow = function () {
 
 //echo any ws to all clients
 io.on('connection', function (socket) {
+  console.log('connection');
   socket.on('message', function (e) {
     //broadcast message
     console.log('received: ' + e)

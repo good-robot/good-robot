@@ -33,33 +33,85 @@ var stream_name = "mystream";
 //	SET UP SERIAL
 //-----------------------------------------------------------------------------------
 
+const ROBOT_ROVER = 'rover'
+const ROBOT_GOOD = 'good'
+
 console.log('ENV: ', process.env.PI);
 process.env.PI = process.env.PI || false;
+
+
+const ROBOT = process.env.ROBOT || ROBOT_GOOD; 
+let SERIAL_ID
+
+if (ROBOT == ROBOT_GOOD) SERIAL_ID = "/dev/ttyUSB0"
+else if (ROBOT == ROBOT_ROVER) SERIAL_ID = "/dev/ttyACM0"
+
+console.log("Have fun driving the " + ROBOT + " robot!");
 
 var steerRobot = function(angle){}
 var speedRobot = function(angle){}
 var stopRobot = function(){};
 
+
 if(process.env.PI === "true"){
-//   const raspi = require('raspi');
+	console.log('starting up raspi serial.. ')
+  const raspi = require('raspi');
   const Serial = require('raspi-serial').Serial;
-   
-  raspi.init(() => {
-    var serial = new Serial({portId:"/dev/ttyACM0", baudrate: 9600});
-    serial.open(() => {
-	  stopRobot = function() {
-        serial.write('speed ' + 0);
-      }
-      steerRobot = function(angle) {
-        serial.write('steer ' + int(clamp_value(angle, -90, 90)));
-	  }
-	  speedRobot = function(angle) {
-        serial.write('speed ' + int(clamp_value(angle, -90, 90)));
-      }
-    });
-  });
+  try {
+	raspi.init(() => {
+		console.log('connecting to serial port: ' + SERIAL_ID);
+		var serial = new Serial({portId: SERIAL_ID, baudrate: 9600});
+		serial.open(() => {
+			console.log('successfully opened serial port to ' + ROBOT);
+			stopRobot = function() {
+				if (ROBOT == ROBOT_GOOD) {
+					console.log('SER: speed ' + 0 + '\r');
+					serial.write('speed ' + 0 + '\r');
+				}
+				else if (ROBOT == ROBOT_ROVER) {
+					console.log('SER: x');
+					serial.write('x')
+				}
+			}
+			steerRobot = function(angle) {
+				if (ROBOT == ROBOT_GOOD) {
+					console.log('SER: steer ' + clamp_value(angle, -90, 90) + '\r');
+					serial.write('steer ' + clamp_value(angle, -90, 90) + '\r');
+				}
+				else if (ROBOT == ROBOT_ROVER) {
+					if (angle < 0) {
+						console.log('SER: a');
+						serial.write('a')
+					} else if (angle > 0) {
+						console.log('SER: d');
+						serial.write('d')
+					}
+				}
+			}
+			speedRobot = function(angle) {
+				if (ROBOT == ROBOT_GOOD) {
+					console.log('SER: speed ' + clamp_value(angle, -90, 90) + '\r');
+					serial.write('speed ' + clamp_value(angle, -90, 90) + '\r');
+				}
+				else if (ROBOT == ROBOT_ROVER) {
+					if (angle < 0) {
+						console.log('SER: w');
+						serial.write('s')
+					} else if (angle > 0) {
+						console.log('SER: s');
+						serial.write('w')
+					}
+				}
+			}
+		});
+	  });
+  } catch (error) {
+	  console.log("ERROR connecting to serial port!");
+	  console.log(error);
+  }
 }
 
+console.log(speedRobot);
 
 //-----------------------------------------------------------------------------------
 //	DETECT SERVER OWN IP
@@ -241,8 +293,8 @@ io.on
 			"steering",
 			function (data)
 			{
+				console.log('steer ' + data.payload);
 				const steeringAngle = clamp_value(data.payload, -90, 90);
-				console.log("steering: " +steeringAngle);
 				steerRobot(steeringAngle);
 			}
 		);
@@ -252,7 +304,6 @@ io.on
 			function (data)
 			{
 				const speedAngle = clamp_value(data.payload, -90, 90);
-				console.log("speed: " +speedAngle);
 				speedRobot(speedAngle);
 			}
 		);

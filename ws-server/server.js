@@ -4,24 +4,44 @@
 
 userLog = 'userlog.txt'
 
-const express =  require('express')
-const app = express()
-const server = require('http').Server(app)
-var io = require('socket.io')(server);
+const WebSocket = require('ws');
+const ws_port = process.env.WS_PORT || 3001
+const wss = new WebSocket.Server({ port: ws_port });
+
+//echo any ws to all clients
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(e) {
+    wss.clients.forEach(function each(client) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(e);
+      }
+    });
+    console.log('received: ' + e)
+    d = JSON.parse(e)
+    if(d.event === "userConnected"){
+      console.log('writing user to userLog: ', d.user)
+      var newDate = new Date();
+      var datetime = newDate.today() + " @ " + newDate.timeNow();
+      fs.appendFile(userLog, datetime + ' ' + d.user + '\n', function (err) {
+        if(err) console.log(err);
+      });
+    }
+  });
+});
+
+
+const server = require('http').createServer();
+
+const io = require('socket.io')(server, {
+  path: '/ws',
+  serveClient: false,
+});
 
 //listen for http
 const http_port = process.env.HTTP_PORT || 3000
 server.listen(http_port, () =>
   console.log('Listening on port ' + http_port),
 );
-
-//serve static stuff from public folder
-app.use(express.static('public'))
-
-app.get('/', (req, res) => {
-    console.log('got a hit');
-    res.send(404);
-});
 
 //listen for ws
 const fs = require('fs');
@@ -55,5 +75,3 @@ io.on('connection', function (socket) {
     }
   });
 });
-
-module.exports = app

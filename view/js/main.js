@@ -64,6 +64,7 @@ $(document).ready(function() {
 	});
 
 	$speedControl.on("input change", function(e) {
+		console.log('input')
 		speedAngle = parseInt($(this).val()) * 0.5;
 		socket_speed_handler(speedAngle);
 		window.navigator.vibrate(Math.abs(speedAngle) * 10);

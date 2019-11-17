@@ -161,7 +161,7 @@ $(document).ready(function() {
 												janus.destroy();
 												$('#start').attr('disabled', true).html("Bye").unbind('click');
 											});
-										} 
+										}
 									});
 								},
 								error: function(error) {
@@ -236,14 +236,14 @@ $(document).ready(function() {
 									Janus.log(" ::: Got a remote stream :::");
 									Janus.log(stream);
 									var addButtons = false;
-									if($('#remotevideo').length === 0) {
+									if($('#arjs-video').length === 0) {
 										addButtons = true;
 										$('#stream').append('<video class="rounded centered hide" id="remotevideo" width=100% autoplay playsinline/>');
 										// Show the stream and hide the spinner when we get a playing event
-										$("#remotevideo").bind("playing", function () {
+										$("#arjs-video").bind("playing", function () {
 											$('#waitingvideo').remove();
 											if(this.videoWidth)
-												$('#remotevideo').removeClass('hide').show();
+												$('#arjs-video').removeClass('hide').show();
 											if(spinner !== null && spinner !== undefined)
 												spinner.stop();
 											spinner = null;
@@ -256,18 +256,18 @@ $(document).ready(function() {
 											if(Janus.webRTCAdapter.browserDetails.browser === "firefox") {
 												// Firefox Stable has a bug: width and height are not immediately available after a playing
 												setTimeout(function() {
-													var width = $("#remotevideo").get(0).videoWidth;
-													var height = $("#remotevideo").get(0).videoHeight;
+													var width = $("#arjs-video").get(0).videoWidth;
+													var height = $("#arjs-video").get(0).videoHeight;
 													$('#curres').removeClass('hide').text(width+'x'+height).show();
 												}, 2000);
 											}
 										});
 									}
-									Janus.attachMediaStream($('#remotevideo').get(0), stream);
+									Janus.attachMediaStream($('#arjs-video').get(0), stream);
 									var videoTracks = stream.getVideoTracks();
 									if(videoTracks === null || videoTracks === undefined || videoTracks.length === 0) {
 										// No remote video
-										$('#remotevideo').hide();
+										$('#arjs-video').hide();
 										if($('#stream .no-video-container').length === 0) {
 											$('#stream').append(
 												'<div class="no-video-container">' +
@@ -277,7 +277,7 @@ $(document).ready(function() {
 										}
 									} else {
 										$('#stream .no-video-container').remove();
-										$('#remotevideo').removeClass('hide').show();
+										$('#arjs-video').removeClass('hide').show();
 
 										//video is playing. add drive controls and connect via websocket
 										$('#drive').removeClass('hide')
@@ -295,8 +295,8 @@ $(document).ready(function() {
 											//~ Janus.log("Current bitrate is " + streaming.getBitrate());
 											$('#curbitrate').text(bitrate);
 											// Check if the resolution changed too
-											var width = $("#remotevideo").get(0).videoWidth;
-											var height = $("#remotevideo").get(0).videoHeight;
+											var width = $("#arjs-video").get(0).videoWidth;
+											var height = $("#arjs-video").get(0).videoHeight;
 											if(width > 0 && height > 0)
 												$('#curres').removeClass('hide').text(width+'x'+height).show();
 										}, 1000);
@@ -305,7 +305,7 @@ $(document).ready(function() {
 								ondataopen: function(data) {
 									Janus.log("The DataChannel is available!");
 									$('#waitingvideo').remove();
-									
+
 									//dont need the data output
 									//$('#stream').append(
 									//	'<input class="form-control" type="text" id="datarecv" disabled></input>'
@@ -322,7 +322,7 @@ $(document).ready(function() {
 								oncleanup: function() {
 									Janus.log(" ::: Got a cleanup notification :::");
 									$('#waitingvideo').remove();
-									$('#remotevideo').remove();
+									$('#arjs-video').remove();
 									$('#datarecv').remove();
 									$('.no-video-container').remove();
 									$('#bitrate').attr('disabled', true);
@@ -899,21 +899,21 @@ function unbindTouchKeys() {
 	$(document).unbind('keyup');
 	$(document).unbind('keydown');
 	$('#w').on('touchstart', function(){
-		
+
 	})
 	$('#w').on('touchend', function(){
-		
+
 	})
 
 	$('#a').on('touchstart', function(){
-		
+
 	})
 	$('#a').on('touchend', function(){
-		
+
 	})
 
 	$('#s').on('touchstart', function(){
-		
+
 	})
 	$('#s').on('touchend', function(){
 
@@ -1133,7 +1133,7 @@ function newRemoteFeed(id, display, audio, video) {
 			onremotestream: function(stream) {
 				Janus.log("Remote feed #" + remoteFeed.rfindex);
 				var addButtons = false;
-				if($('#remotevideo'+remoteFeed.rfindex).length === 0) {
+				if($('#arjs-video'+remoteFeed.rfindex).length === 0) {
 					addButtons = true;
 					// No remote video yet
 					$('#videoremote'+remoteFeed.rfindex).append('<video class="rounded centered" id="waitingvideo' + remoteFeed.rfindex + '" width=320 height=240 />');
@@ -1142,31 +1142,31 @@ function newRemoteFeed(id, display, audio, video) {
 						'<span class="label label-primary hide" id="curres'+remoteFeed.rfindex+'" style="position: absolute; bottom: 0px; left: 0px; margin: 15px;"></span>' +
 						'<span class="label label-info hide" id="curbitrate'+remoteFeed.rfindex+'" style="position: absolute; bottom: 0px; right: 0px; margin: 15px;"></span>');
 					// Show the video, hide the spinner and show the resolution when we get a playing event
-					$("#remotevideo"+remoteFeed.rfindex).bind("playing", function () {
+					$("#arjs-video"+remoteFeed.rfindex).bind("playing", function () {
 						if(remoteFeed.spinner !== undefined && remoteFeed.spinner !== null)
 							remoteFeed.spinner.stop();
 						remoteFeed.spinner = null;
 						$('#waitingvideo'+remoteFeed.rfindex).remove();
 						if(this.videoWidth)
-							$('#remotevideo'+remoteFeed.rfindex).removeClass('hide').show();
+							$('#arjs-video'+remoteFeed.rfindex).removeClass('hide').show();
 						var width = this.videoWidth;
 						var height = this.videoHeight;
 						$('#curres'+remoteFeed.rfindex).removeClass('hide').text(width+'x'+height).show();
 						if(Janus.webRTCAdapter.browserDetails.browser === "firefox") {
 							// Firefox Stable has a bug: width and height are not immediately available after a playing
 							setTimeout(function() {
-								var width = $("#remotevideo"+remoteFeed.rfindex).get(0).videoWidth;
-								var height = $("#remotevideo"+remoteFeed.rfindex).get(0).videoHeight;
+								var width = $("#arjs-video"+remoteFeed.rfindex).get(0).videoWidth;
+								var height = $("#arjs-video"+remoteFeed.rfindex).get(0).videoHeight;
 								$('#curres'+remoteFeed.rfindex).removeClass('hide').text(width+'x'+height).show();
 							}, 2000);
 						}
 					});
 				}
-				Janus.attachMediaStream($('#remotevideo'+remoteFeed.rfindex).get(0), stream);
+				Janus.attachMediaStream($('#arjs-video'+remoteFeed.rfindex).get(0), stream);
 				var videoTracks = stream.getVideoTracks();
 				if(videoTracks === null || videoTracks === undefined || videoTracks.length === 0) {
 					// No remote video
-					$('#remotevideo'+remoteFeed.rfindex).hide();
+					$('#arjs-video'+remoteFeed.rfindex).hide();
 					if($('#videoremote'+remoteFeed.rfindex + ' .no-video-container').length === 0) {
 						$('#videoremote'+remoteFeed.rfindex).append(
 							'<div class="no-video-container">' +
@@ -1176,7 +1176,7 @@ function newRemoteFeed(id, display, audio, video) {
 					}
 				} else {
 					$('#videoremote'+remoteFeed.rfindex+ ' .no-video-container').remove();
-					$('#remotevideo'+remoteFeed.rfindex).removeClass('hide').show();
+					$('#arjs-video'+remoteFeed.rfindex).removeClass('hide').show();
 				}
 				if(!addButtons)
 					return;
@@ -1188,8 +1188,8 @@ function newRemoteFeed(id, display, audio, video) {
 						var bitrate = remoteFeed.getBitrate();
 						$('#curbitrate'+remoteFeed.rfindex).text(bitrate);
 						// Check if the resolution changed too
-						var width = $("#remotevideo"+remoteFeed.rfindex).get(0).videoWidth;
-						var height = $("#remotevideo"+remoteFeed.rfindex).get(0).videoHeight;
+						var width = $("#arjs-video"+remoteFeed.rfindex).get(0).videoWidth;
+						var height = $("#arjs-video"+remoteFeed.rfindex).get(0).videoHeight;
 						if(width > 0 && height > 0)
 							$('#curres'+remoteFeed.rfindex).removeClass('hide').text(width+'x'+height).show();
 					}, 1000);
@@ -1200,7 +1200,7 @@ function newRemoteFeed(id, display, audio, video) {
 				if(remoteFeed.spinner !== undefined && remoteFeed.spinner !== null)
 					remoteFeed.spinner.stop();
 				remoteFeed.spinner = null;
-				$('#remotevideo'+remoteFeed.rfindex).remove();
+				$('#arjs-video'+remoteFeed.rfindex).remove();
 				$('#waitingvideo'+remoteFeed.rfindex).remove();
 				$('#novideo'+remoteFeed.rfindex).remove();
 				$('#curbitrate'+remoteFeed.rfindex).remove();

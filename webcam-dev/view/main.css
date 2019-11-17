@@ -1,0 +1,170 @@
+*, *::after, *::before {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Bebas Neue', cursive;
+}
+
+header {
+	height: 50px;
+	width: 100%;
+	display: block;
+	background-color: rgba(255,255,255,.333);
+	display: flex;
+	padding: 1rem 2rem;
+	align-items: center;
+	position: fixed;
+	z-index: 100;
+	justify-content: space-between;
+}
+
+.timebar {
+	background: #FAFAFA;
+	width: 60%;
+	height: 10px;
+	border-radius: 50px;
+	position: relative;
+}
+
+.timebar-fill {
+	height: 100%;
+	background: linear-gradient(-90deg, rgba(242,128,0,1) 0%, rgba(119,4,119,1) 100%);
+	width: 0;
+	max-width: 100%;
+	border-radius: 50px;
+	position: absolute;
+	z-index: 10;
+	transition: all 1s linear;
+}
+
+main {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
+}
+
+.points-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 20px;
+	height: 20px;
+	border-radius: 35px;
+	font-size: 1.333rem;
+	font-weight: 500;
+	padding: 1rem;
+	color: #fff;
+	background: #770578;
+}
+
+.opponents-wrapper {
+	display: flex;
+	top: 4rem;
+	position: absolute;
+	left: 2rem;
+}
+
+.opponent-picture + .opponent-picture {
+	margin-left: .5rem;
+}
+
+.opponent-picture-image {
+	width: 40px;
+	height: 40px;
+	border: 2px solid rgba(242,128,0,1);
+	border-radius: 40px;
+}
+
+.speed-control-wrapper {
+	position: absolute;
+	right: 0;
+	top: 50%;
+}
+
+.speed-control {
+	-webkit-appearance: none;
+	background: transparent;
+  margin: 0;
+	width: 50vh;
+	transform: rotate(-90deg);
+}
+.speed-control:focus {
+  outline: none;
+}
+
+.speed-control::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 50px;
+  cursor: pointer;
+  animate: 0.2s;
+	background: linear-gradient(-90deg, rgba(242,128,0,1) 0%,  rgba(242,128,0,.2) 20%, rgba(255,255,255,0) 50%, rgba(119,4,119,.2) 80%, rgba(119,4,119,1) 100%);
+  border-radius: 100px;
+}
+
+/* #B200B7, #770578, #f38100, #DB682E */
+
+.speed-control::-webkit-slider-thumb {
+  border: 0;
+  height: 50px;
+	width: 50px;
+  border-radius: 100px;
+	background: rgba(255,255,255);
+	opacity: .5;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+.speed-control:focus::-webkit-slider-runnable-track {
+  background: #367ebd;
+}
+.speed-control::-moz-range-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+.speed-control::-moz-range-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 36px;
+  width: 16px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.action-cards-wrapper {
+	position: absolute;
+	bottom: 1rem;
+	left: 2rem;
+	perspective: 1000;
+}
+
+.action-card + .action-card {
+	margin-left: .5rem;;
+}
+
+.action-card {
+	width: 60px;
+	height: 60px;
+	transform-style: preserve-3d;
+}
+
+.action-card--selected {
+	animation-name: flipping;
+	animation-duration: 3s;
+	animation-iteration-count: infinite;
+}
+
+@keyframes flipping {
+	0%   { transform: rotateY(0deg); }
+	50%   { transform: rotateY(180deg); }
+	100%   { transform: rotateY(359deg); }
+}

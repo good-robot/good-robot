@@ -22,10 +22,14 @@ var websocket_stream_port = 8082;
 var file_index_name = "index.html";
 var file_css_name = "style.css";
 var file_jsplayer_name = "jsmpeg.min.js";
+// var view_file_index_name = "view/index.html";
+var js_file_name = "main.js";
 //Http and css files loaded into memory for fast access
 var file_index;
 var file_css;
 var file_jsplayer;
+// var view_file_index;
+var js_file;
 //Name of the local video stream
 var stream_name = "mystream";
 
@@ -43,7 +47,7 @@ var stopRobot = function(){};
 if(process.env.PI === "true"){
 //   const raspi = require('raspi');
   const Serial = require('raspi-serial').Serial;
-   
+
   raspi.init(() => {
     var serial = new Serial({portId:"/dev/ttyACM0", baudrate: 9600});
     serial.open(() => {
@@ -119,6 +123,8 @@ http.listen
 		file_index = load_file( file_index_name );
 		file_css = load_file( file_css_name );
 		file_jsplayer = load_file( file_jsplayer_name );
+		// view_file_index = load_file( view_file_index_name );
+		js_file = load_file( js_file_name );
 	}
 );
 
@@ -155,6 +161,15 @@ function http_handler(req, res)
 		//Request main page
 		res.writeHead( 200, {"Content-Type": detect_content(file_jsplayer_name),"Content-Length" :file_jsplayer.length} );
 		res.write(file_jsplayer);
+		res.end();
+
+		console.log("INFO: Serving file: " +req.url);
+	}
+	else if (req.url == ("/" +js_file_name))
+	{
+		//Request main page
+		res.writeHead( 200, {"Content-Type": detect_content(js_file_name),"Content-Length" :js_file.length} );
+		res.write(js_file);
 		res.end();
 
 		console.log("INFO: Serving file: " +req.url);

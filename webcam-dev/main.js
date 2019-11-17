@@ -2466,7 +2466,7 @@ var host_ip = document.location.hostname;
 console.log("connecting to host: ", host_ip);
 
 //Connect to the server via websocket
-var mysocket = io("https://" +host_ip +":8080");
+var mysocket = io("http://" +host_ip +":8080");
 //Long lived frame object
 var last_frame;
 

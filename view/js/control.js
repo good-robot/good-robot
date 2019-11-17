@@ -54,6 +54,9 @@ function sendKey(keyDown, key, webSocket) {
 	webSocket.send(json);
 }
 
+var socket_steering_handler = function (steeringAngle){};
+var socket_speed_handler = function (speedAngle){};
+
 function unbindTouchKeys() {
 	console.log('unbinding key events')
 	$(document).unbind('keyup');
@@ -85,10 +88,32 @@ function unbindTouchKeys() {
 	$('#d').on('touchend', function(){
 
 	})
+
+	socket_steering_handler = function (steeringAngle) {};
+	socket_speed_handler = function (speedAngle){};
 }
 
 function bindTouchKeys(webSocket) {
 	console.log('binding key events')
+
+	/////////
+	// LISTENERS FOR STEERING AND SPEED
+	////////
+	socket_steering_handler = function (steeringAngle)
+	{
+		// steeringAngle must be in [-90, 90]
+		json = JSON.stringify("steering", { payload: steeringAngle })
+		webSocket.send(json);
+		console.log("Steering angle ", steeringAngle);
+	}
+	socket_speed_handler = function (speedAngle)
+	{
+		// steeringAngle must be in [-90, 90]
+		json = JSON.stringify("speed", { payload: speedAngle })
+		webSocket.send(json);
+		console.log("Speed angle ", speedAngle);
+	}
+
 	$(document).keyup(function(e) {
 		sendKey(false, e.key, webSocket)
 	});
@@ -125,6 +150,7 @@ function bindTouchKeys(webSocket) {
 		sendKey(false, 'd', webSocket)
 	})
 }
+
 
 // function control_connect() {
 

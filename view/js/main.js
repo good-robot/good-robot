@@ -38,7 +38,7 @@ $(document).ready(function() {
 
 	var video  	= document.querySelector('video');
 	var canvas 	= document.querySelector('canvas');
-	var initAlpha, alpha, steeringAngle, speedAngle;
+	var initBeta, beta, steeringAngle, speedAngle;
 
 	window.addEventListener("deviceorientation", function(event) {
 		if (!video || !canvas) {
@@ -46,23 +46,23 @@ $(document).ready(function() {
 			canvas = document.querySelector('canvas');
 
 		} else {
-			alpha = event.alpha;
+			beta = event.beta;
 
-			if (initAlpha == undefined) {
-				initAlpha = alpha;
+			if (initBeta == undefined) {
+				initBeta = beta;
 			}
 
-			steeringAngle = parseFloat(alpha) - parseFloat(initAlpha);
+			steeringAngle = parseFloat(beta) - parseFloat(initBeta);
 
-			if (steeringAngle > 180) {
-				steeringAngle -= 180;
+			if (Math.abs(steeringAngle) > 150) {
+				steeringAngle = steeringAngle > 0 ? steeringAngle - 180 : steeringAngle + 180;
 				if (Math.abs(steeringAngle) < 5) return;
 				video.style.transform = "rotate(" + String(-steeringAngle) + "deg)";
 				canvas.style.transform = "rotate(" + String(-steeringAngle) + "deg)";
 				socket_steering_handler(steeringAngle);
 
 			} else {
-				steeringAngle = steeringAngle < -180 ? steeringAngle + 180 : steeringAngle;
+				steeringAngle = steeringAngle > 0 ? steeringAngle - 180 : steeringAngle + 180;
 				if (Math.abs(steeringAngle) < 5) return;
 				video.style.transform = "rotate(" + String(steeringAngle) + "deg)";
 				canvas.style.transform = "rotate(" + String(steeringAngle) + "deg)";

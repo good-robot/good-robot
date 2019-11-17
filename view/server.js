@@ -61,3 +61,5 @@ wss.on('connection', function connection(ws) {
     }
   });
 });
+
+module.exports = app;

@@ -102,14 +102,14 @@ function bindTouchKeys(webSocket) {
 	socket_steering_handler = function (steeringAngle)
 	{
 		// steeringAngle must be in [-90, 90]
-		json = JSON.stringify("steering", { payload: steeringAngle })
+		json = JSON.stringify({event: "steer", angle: steeringAngle})
 		webSocket.send(json);
 		console.log("Steering angle ", steeringAngle);
 	}
 	socket_speed_handler = function (speedAngle)
 	{
 		// steeringAngle must be in [-90, 90]
-		json = JSON.stringify("speed", { payload: speedAngle })
+		json = JSON.stringify({event: "speed", angle: speedAngle})
 		webSocket.send(json);
 		console.log("Speed angle ", speedAngle);
 	}

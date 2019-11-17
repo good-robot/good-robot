@@ -114,97 +114,42 @@ console.log(speedRobot);
 //	WEBSOCKET SERVER: CONTROL/FEEDBACK REQUESTS
 //-----------------------------------------------------------------------------------
 //	Handle websocket connection to the client
-const i = require('socket.io-client');
-const io = i('https://goodrobot.live', {
-  path: '/ws'
-});
+const path = 'wss://goodrobot.live/ws'
 
-io.on
-(
-	"connection",
-	function (socket)
-	{
-		console.log("connecting...");
+function connect() {
+  var ws = new WebSocket(path);
 
-		socket.emit("welcome", { payload: "Server says hello" });
+  ws.onopen = function() {
+    console.log('websocket open!');
+    hello = {event: "message", message: "pi connected!"};
+    ws.send(JSON.stringify(hello));
+  }
 
-		//Periodically send the current server time to the client in string form
-		setInterval
-		(
-			function()
-			{
-				socket.emit("server_time", { server_time: get_server_time() });
-			},
-			//Send every 333ms
-			333
-		);
+  ws.onmessage = function(e) {
+    d = JSON.parse(e.data)
+    console.log(d)
+    if(d.event === "steer")
+    	steerRobot(d.angle)
+    if(d.event === "speed")
+    	speedRobot(d.angle)
+  }
 
-		socket.on
-		(
-			"myclick",
-			function (data)
-			{
-				timestamp_ms = get_timestamp_ms();
-				socket.emit("profile_ping", { timestamp: timestamp_ms });
-				console.log("button event: " +" client says: " +data.payload);
-			}
-		);
+  ws.onclose = function(e) {
+    console.log('Socket is closed. Stopping rover and reconnecting.', e.reason);
+    stopRover()
+    setTimeout(function() {
+      connect();
+    }, 100);
+  }
 
-		//////////////////
-		// ROBOT STEERING INTERFACE
-		//////////////////
-		socket.on
-		(
-			"steering",
-			function (data)
-			{
-				console.log('steer ' + data.payload);
-				const steeringAngle = clamp_value(data.payload, -90, 90);
-				steerRobot(steeringAngle);
-			}
-		);
-		socket.on
-		(
-			"speed",
-			function (data)
-			{
-				const speedAngle = clamp_value(data.payload, -90, 90);
-				speedRobot(speedAngle);
-			}
-		);
-		socket.on
-		(
-			"stop",
-			function (data)
-			{
-				console.log("STOP!");
-				stopRobot();
-			}
-		);
-		// socket.on
-		// (
-		// 	"keyboard",
-		// 	function (data)
-		// 	{
-		// 		timestamp_ms = get_timestamp_ms();
-		// 		socket.emit("profile_ping", { timestamp: timestamp_ms });
-		// 		console.log("keyboard event: " +" client says: " +data.payload);
-		// 	}
-		// );
+  ws.onerror = function(err) {
+    console.error('Socket encountered error: ', err.message, 'Closing socket');
+    ws.close();
+  };
+}
 
-		//profile packets from the client are answer that allows to compute roundway trip time
-		// socket.on
-		// (
-		// 	"profile_pong",
-		// 	function (data)
-		// 	{
-		// 		timestamp_ms_pong = get_timestamp_ms();
-		// 		timestamp_ms_ping = data.timestamp;
-		// 		console.log("Pong received. Round trip time[ms]: " +(timestamp_ms_pong -timestamp_ms_ping));
-		// 	}
-		// );
-	}
-);
+connect();
+
 
 
 //-----------------------------------------------------------------------------------

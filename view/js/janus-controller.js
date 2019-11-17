@@ -105,7 +105,6 @@ $(document).ready(function() {
 					server: server,
 					success: function() {
 						//socket.io
-						var socket = io(wss);
 						const socket = io(wss, {
 						  path: '/ws'
 						});

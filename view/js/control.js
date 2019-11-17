@@ -15,11 +15,11 @@ function control_connect() {
 
 	console.log('Ben is the best');
 	//socket.io
-	// mysocket = io(wss, {
-	//   path: '/ws'
-	// });
-	
-	mysocket = io.connect(wss);
+	mysocket = io('https://goodrobot.live' {
+	  path: '/ws'
+	});
+
+	//mysocket = io.connect(wss);
 
 	//Long lived frame object
 	var last_frame;

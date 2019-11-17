@@ -118,7 +118,7 @@ console.log(speedRobot);
 //	WEBSOCKET SERVER: CONTROL/FEEDBACK REQUESTS
 //-----------------------------------------------------------------------------------
 //	Handle websocket connection to the client
-const path = 'wss://goodrobot.live/ws'
+const path = 'wss://benolayinka.com/ws'
 
 function connect() {
   var ws = new WebSocket(path);

@@ -34,6 +34,7 @@ Date.prototype.timeNow = function () {
 //echo any ws to all clients
 io.on('connection', function (socket) {
   console.log('connection');
+  socket.emit('welcome');
   socket.on('message', function (e) {
     //broadcast message
     console.log('received: ' + e)
@@ -49,3 +50,7 @@ io.on('connection', function (socket) {
     }
   });
 });
+
+io.on('message', function (msg) {
+  console.log('got a message!');
+})

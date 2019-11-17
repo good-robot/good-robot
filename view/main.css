@@ -241,11 +241,14 @@ main {
   border: 0;
   height: 50px;
 	width: 50px;
-  border-radius: 100px;
-	background: rgba(255,255,255);
+	border-radius: 100px;
+	background-image: url('assets/logo.jpg');
+	background-size: cover;
+	background-color: rgba(255,255,255);
 	opacity: .5;
   cursor: pointer;
-  -webkit-appearance: none;
+	-webkit-appearance: none;
+	filter: invert(1);
 }
 .speed-control:focus::-webkit-slider-runnable-track {
 	background: linear-gradient(-90deg, rgba(242,128,0,1) 0%,  rgba(242,128,0,.2) 20%, rgba(255,255,255,0) 50%, rgba(119,4,119,.2) 80%, rgba(119,4,119,1) 100%);
@@ -262,11 +265,14 @@ main {
   border: 0;
   height: 50px;
 	width: 50px;
-  border-radius: 100px;
-	background: rgba(255,255,255);
+	border-radius: 100px;
+	background-image: url('assets/logo.jpg');
+	background-size: cover;
+	background-color: rgba(255,255,255);
 	opacity: .5;
   cursor: pointer;
-  -webkit-appearance: none;
+	-webkit-appearance: none;
+	filter: invert(1);
 }
 
 .action-cards-wrapper {

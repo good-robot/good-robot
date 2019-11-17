@@ -104,6 +104,17 @@ $(document).ready(function() {
 				{
 					server: server,
 					success: function() {
+						//socket.io
+						var socket = io(wss);
+						  socket.on('connect', function () {
+						    socket.send('hi');
+						    socket.send('user');
+
+						    socket.on('message', function (msg) {
+						      // my msg
+						      console.log(msg);
+						    });
+						  });
 						//Connect to websocket server
 						function connect()
 						{

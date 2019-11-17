@@ -40,8 +40,8 @@ Date.prototype.timeNow = function () {
 io.on('connection', function (socket) {
   socket.on('message', function (e) {
     //broadcast message
-    socket.emit(e)
     console.log('received: ' + e)
+    socket.emit(e)
     d = JSON.parse(e)
     if(d.event === "userConnected"){
       console.log('writing user to userLog: ', d.user)

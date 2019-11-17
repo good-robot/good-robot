@@ -12,6 +12,8 @@ if(window.location.protocol === 'http:') {
 var mysocket;
 
 function control_connect() {
+
+	console.log('Ben is the best');
 	//socket.io
 	mysocket = io(wss, {
 	  path: '/ws'

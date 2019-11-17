@@ -92,8 +92,8 @@ if(process.env.PI === "true"){
 			}
 			speedRobot = function(angle) {
 				if (ROBOT == ROBOT_GOOD) {
-					console.log('SER: speed ' + clamp_value(angle, -90, 90) + '\r');
-					serial.write('speed ' + clamp_value(angle, -90, 90) + '\r');
+					console.log('SER: speed ' + clamp_value(angle, -35, 35) + '\r');
+					serial.write('speed ' + clamp_value(angle, -35, 35) + '\r');
 				}
 				else if (ROBOT == ROBOT_ROVER) {
 					if (angle < 0) {

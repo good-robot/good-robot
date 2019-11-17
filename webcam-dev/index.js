@@ -40,8 +40,8 @@ process.env.PI = process.env.PI || false;
 const ROBOT = process.env.ROBOT || ROBOT_GOOD; 
 let SERIAL_ID
 
-if (ROBOT == ROBOT_GOOD) SERIAL_ID = "/dev/ttyUSB0"
-else if (ROBOT == ROBOT_ROVER) SERIAL_ID = "/dev/ttyACM0"
+if (ROBOT === ROBOT_GOOD) SERIAL_ID = "/dev/ttyUSB0"
+else if (ROBOT === ROBOT_ROVER) SERIAL_ID = "/dev/ttyACM0"
 
 console.log("Have fun driving the " + ROBOT + " robot!");
 
@@ -61,43 +61,33 @@ if(process.env.PI === "true"){
 		serial.open(() => {
 			console.log('successfully opened serial port to ' + ROBOT);
 			stopRobot = function() {
-				if (ROBOT == ROBOT_GOOD) {
+				if (ROBOT === ROBOT_GOOD) {
 					console.log('SER: speed ' + 0 + '\r');
 					serial.write('speed ' + 0 + '\r');
 				}
-				else if (ROBOT == ROBOT_ROVER) {
-					console.log('SER: x');
-					serial.write('x')
+				else if (ROBOT === ROBOT_ROVER) {
+					console.log('SER: speed ' + 0 + '\r');
+					serial.write('speed ' + 0 + '\r');
 				}
 			}
 			steerRobot = function(angle) {
-				if (ROBOT == ROBOT_GOOD) {
+				if (ROBOT === ROBOT_GOOD) {
 					console.log('SER: steer ' + clamp_value(angle, -90, 90) + '\r');
 					serial.write('steer ' + clamp_value(angle, -90, 90) + '\r');
 				}
-				else if (ROBOT == ROBOT_ROVER) {
-					if (angle < 0) {
-						console.log('SER: a');
-						serial.write('a')
-					} else if (angle > 0) {
-						console.log('SER: d');
-						serial.write('d')
-					}
+				else if (ROBOT === ROBOT_ROVER) {
+					console.log('SER: steer ' + clamp_value(angle, -90, 90) + '\r');
+					serial.write('steer ' + clamp_value(angle, -90, 90) + '\r');
 				}
 			}
 			speedRobot = function(angle) {
-				if (ROBOT == ROBOT_GOOD) {
+				if (ROBOT === ROBOT_GOOD) {
+					console.log('SER: speed ' + clamp_value(angle, -35, 35) + '\r');
+					serial.write('speed ' + clamp_value(angle, -35, 35) + '\r');
+				}
+				else if (ROBOT === ROBOT_ROVER) {
 					console.log('SER: speed ' + clamp_value(angle, -90, 90) + '\r');
 					serial.write('speed ' + clamp_value(angle, -90, 90) + '\r');
-				}
-				else if (ROBOT == ROBOT_ROVER) {
-					if (angle < 0) {
-						console.log('SER: w');
-						serial.write('s')
-					} else if (angle > 0) {
-						console.log('SER: s');
-						serial.write('w')
-					}
 				}
 			}
 		});

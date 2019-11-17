@@ -1,9 +1,19 @@
-var host_ip = document.location.hostname;
-// host_ip = "localhost"
-console.log("connecting to host: ", host_ip);
+var wss = null
 
-//Connect to the server via websocket
-var mysocket = io("https://" +host_ip +":8080");
+//TODO these are hardcoded in janus.js, change that
+if(window.location.protocol === 'http:') {
+	//server = "http://" + window.location.hostname + ":8088/janus";
+	wss = "ws://" + window.location.hostname + "/ws";
+} else {
+	//server = "https://" + window.location.hostname + ":8089/janus";
+	wss = "wss://" + window.location.hostname + "/ws";
+}
+
+//socket.io
+const mysocket = io(wss, {
+  path: '/ws'
+});
+
 //Long lived frame object
 var last_frame;
 
@@ -13,6 +23,15 @@ var last_frame;
 //	Link is initiated by the client
 //	Server sends a welcome message when link is estabilished
 //	Server could send an auth token to keep track of individual clients and login data
+
+mysocket.on('connect', function () {
+	mysocket.send('user');
+
+	socket.on('message', function (msg) {
+	  // my msg
+	  console.log(msg);
+	});
+});
 
 mysocket.on
 (

@@ -4,32 +4,6 @@
 
 userLog = 'userlog.txt'
 
-const WebSocket = require('ws');
-const ws_port = process.env.WS_PORT || 3001
-const wss = new WebSocket.Server({ port: ws_port });
-
-//echo any ws to all clients
-wss.on('connection', function connection(ws) {
-  ws.on('message', function incoming(e) {
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(e);
-      }
-    });
-    console.log('received: ' + e)
-    d = JSON.parse(e)
-    if(d.event === "userConnected"){
-      console.log('writing user to userLog: ', d.user)
-      var newDate = new Date();
-      var datetime = newDate.today() + " @ " + newDate.timeNow();
-      fs.appendFile(userLog, datetime + ' ' + d.user + '\n', function (err) {
-        if(err) console.log(err);
-      });
-    }
-  });
-});
-
-
 const server = require('http').createServer();
 
 const io = require('socket.io')(server, {

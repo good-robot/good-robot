@@ -43,19 +43,8 @@
 // the whole session.
 //
 var server = null;
-var wss = null
-var ws_enabled = false;
 
 server = '/janusbase/janus'
-
-//TODO these are hardcoded in janus.js, change that
-if(window.location.protocol === 'http:') {
-	//server = "http://" + window.location.hostname + ":8088/janus";
-	wss = "ws://" + window.location.hostname + "/ws";
-} else {
-	//server = "https://" + window.location.hostname + ":8089/janus";
-	wss = "wss://" + window.location.hostname + "/ws";
-}
 
 var doSimulcast = (getQueryStringValue("simulcast") === "yes" || getQueryStringValue("simulcast") === "true");
 var doSimulcast2 = (getQueryStringValue("simulcast2") === "yes" || getQueryStringValue("simulcast2") === "true");
@@ -104,54 +93,9 @@ $(document).ready(function() {
 				{
 					server: server,
 					success: function() {
-						//socket.io
-						const socket = io(wss, {
-						  path: '/ws'
-						});
-						  socket.on('connect', function () {
-						    socket.send('hi');
-						    socket.send('user');
-
-						    socket.on('message', function (msg) {
-						      // my msg
-						      console.log(msg);
-						    });
-						  });
-						//Connect to websocket server
-						function connect()
-						{
-							$('#intro').hide();
-							//ben move this
-							var webSocket = new WebSocket(wss);
-							webSocket.onopen = function (event) {
-								console.log('Websocket opened!')
-								sendUser(webSocket, user);
-								//log keypresses
-								bindTouchKeys(webSocket);
-							};
-
-							webSocket.onmessage = function(data) {
-								//
-								console.log('Received a message!' + data)
-							}
-
-							webSocket.onclose = function(e) {
-								//remove keypress listeners
-								unbindTouchKeys();
-								console.log('Socket is closed. Reconnecting..', e.reason);
-							    setTimeout(function() {
-							      connect();
-							    }, 100);
-							}
-
-							webSocket.onerror = function(err) {
-								console.log('Socket encountered error: ', err.message, 'Closing socket');
-								webSocket.close();
-							};
-						}
-						if (ws_enabled) {
-							connect();
-						}
+						
+						//connect to websocket controller
+						control_connect();
 
 						// Attach to streaming plugin
 						janus.attach(

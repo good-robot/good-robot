@@ -28,6 +28,14 @@ var username = localStorage.getItem("name");
 
 $(document).ready(function() {
 
+	if (window.innerWidth <= 1024) {
+		var goFS = document.getElementById("goFS");
+
+		goFS.addEventListener("click", function() {
+			document.body.requestFullscreen();
+		}, false);
+	}
+
 	var video  	= document.querySelector('video');
 	var canvas 	= document.querySelector('canvas');
 	var initAlpha, alpha, steeringAngle, speedAngle;
@@ -89,7 +97,7 @@ $(document).ready(function() {
 		}
 
 		$speedControl.val(speed);
-	}, 1000);
+	}, 333);
 
 	var time = 0;
 	var timebar = document.querySelector('.timebar-fill');

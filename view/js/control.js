@@ -35,7 +35,7 @@ function control_connect() {
 		(socket) => 
 		{
 			console.log('connected to websocket server');
-	  		mysocket.send('user');
+	  		socket.send('user');
 		}
 	)
 

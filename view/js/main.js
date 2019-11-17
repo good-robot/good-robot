@@ -59,7 +59,7 @@ $(document).ready(function() {
 	});
 
 	$(".speed-control").on("input change", function(e) {
-		speedAngle = parseInt($(this).val()) * 0.9;
+		speedAngle = parseInt($(this).val()) * 0.5;
 		socket_speed_handler(speedAngle);
 		window.navigator.vibrate(Math.abs(speedAngle) * 10);
 	})

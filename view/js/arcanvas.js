@@ -31,15 +31,15 @@ scene.add(camera);
 
 var arToolkitSource = new THREEx.ArToolkitSource({
 	// to read from the webcam
-	sourceType : 'webcam',
+	// sourceType : 'webcam',
 
 	// // to read from an image
 	// sourceType : 'image',
 	// sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/images/img.jpg',
 
 	// to read from a video
-	// sourceType : 'video',
-	// sourceUrl : '../assets/test.mp4',
+	sourceType : 'video',
+	sourceUrl : '../assets/test.mp4',
 
 })
 

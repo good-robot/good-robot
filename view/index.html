@@ -22,10 +22,10 @@
 			<h1>G00D R0B0T</h1>
 			<h2>Web controlled robots that do good in the world</h2>
 			<div id="name-form">
-				<label>
+				<!-- <label>
 					Howdy, what's your name, hooman?
 					<input type="text" id="user">
-				</label>
+				</label> -->
 				<button class="btn btn-default" autocomplete="off" id="start">Start</button>
 			</div>
 
@@ -77,7 +77,7 @@
 
 				$btn.on("click", function() {
 					localStorage.setItem("name", $input.val());
-					window.location.pathname = "drive";
+					window.location.pathname = "drive.html";
 				});
 			})
 		</script>

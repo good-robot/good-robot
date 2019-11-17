@@ -15,11 +15,11 @@ function control_connect() {
 
 	console.log('Ben is the best');
 	//socket.io
-	mysocket = io('https://goodrobot.live', {
-	  path: '/ws'
-	});
+	//mysocket = io('https://goodrobot.live', {
+	//  path: '/ws'
+	//});
 
-	//mysocket = io.connect(wss);
+	mysocket = io.connect('http://goodrobot.live:3000');
 
 	//Long lived frame object
 	var last_frame;
@@ -38,6 +38,7 @@ function control_connect() {
 		{
 			console.log('connected to websocket server');
 	  		socket.send('user');
+	  		socket.emit('new user', "user")
 		}
 	)
 

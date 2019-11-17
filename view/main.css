@@ -2,13 +2,6 @@
 	box-sizing: border-box;
 }
 
-#name-form {
-	position: absolute;
-	z-index: 10000;
-	top: 5rem;
-	left: 2rem;;
-}
-
 body {
 	background: #000;
 }

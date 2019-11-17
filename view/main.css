@@ -132,6 +132,12 @@ header {
 	transition: all 1s linear;
 }
 
+.timebar-clock {
+	margin-left: 1rem;
+	margin-right: auto;
+	height: 25px;
+}
+
 main {
 	position: fixed;
 	top: 0;
@@ -212,26 +218,25 @@ main {
   -webkit-appearance: none;
 }
 .speed-control:focus::-webkit-slider-runnable-track {
-  background: #367ebd;
+	background: linear-gradient(-90deg, rgba(242,128,0,1) 0%,  rgba(242,128,0,.2) 20%, rgba(255,255,255,0) 50%, rgba(119,4,119,.2) 80%, rgba(119,4,119,1) 100%);
 }
 .speed-control::-moz-range-track {
   width: 100%;
-  height: 8.4px;
+  height: 50px;
   cursor: pointer;
   animate: 0.2s;
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  background: #3071a9;
-  border-radius: 1.3px;
-  border: 0.2px solid #010101;
+	background: linear-gradient(-90deg, rgba(242,128,0,1) 0%,  rgba(242,128,0,.2) 20%, rgba(255,255,255,0) 50%, rgba(119,4,119,.2) 80%, rgba(119,4,119,1) 100%);
+  border-radius: 100px;
 }
 .speed-control::-moz-range-thumb {
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-  border: 1px solid #000000;
-  height: 36px;
-  width: 16px;
-  border-radius: 3px;
-  background: #ffffff;
+  border: 0;
+  height: 50px;
+	width: 50px;
+  border-radius: 100px;
+	background: rgba(255,255,255);
+	opacity: .5;
   cursor: pointer;
+  -webkit-appearance: none;
 }
 
 .action-cards-wrapper {

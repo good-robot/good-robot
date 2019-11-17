@@ -1,7 +1,9 @@
 var ROUND_TIME = 30;
+var collected = 0;
+var $points = $('.points-wrapper');
 
 function animateCSS(element, animationName, callback) {
-	const node = document.querySelector(element)
+	var node = document.querySelector(element)
 	node.classList.add('animated', animationName)
 
 	function handleAnimationEnd() {
@@ -16,14 +18,17 @@ function animateCSS(element, animationName, callback) {
 
 animateCSS('body', 'fadeInUp');
 
+function collectObject() {
+	$points.text(parseInt($points.text()) + 1)
+	animateCSS('#points', 'rubberBand');
+}
+
 var username = localStorage.getItem("name");
 
 $(document).ready(function() {
 	var video  	= document.querySelector('video');
 	var canvas 	= document.querySelector('canvas');
 	var initAlpha, alpha, steeringAngle, speedAngle;
-
-	console.log(username)
 
 	window.addEventListener("deviceorientation", function(event) {
 		if (!video || !canvas) {
@@ -66,10 +71,15 @@ $(document).ready(function() {
 		timebar.style.width = (time/ROUND_TIME)*100 + "%";
 		time += 1;
 
+		if (ROUND_TIME - time > 10) {
+			animateCSS('.timebar-clock', 'shake');
+		}
+
 		if (time == ROUND_TIME) {
 			clearInterval(timer)
 			timebar.style.width = "100%";
 			window.navigator.vibrate([1000, 300, 300, 300, 2000]);
+			animateCSS('.timebar-clock', 'jackInTheBox');
 		}
 	}, 1000);
 })

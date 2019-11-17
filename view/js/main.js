@@ -27,6 +27,14 @@ function collectObject() {
 var username = localStorage.getItem("name");
 
 $(document).ready(function() {
+	if (window.innerWidth < 1000) {
+		var goFS = document.getElementById("goFS");
+
+		goFS.addEventListener("click", function() {
+				document.body.requestFullscreen();
+		}, false);
+	}
+
 	var video  	= document.querySelector('video');
 	var canvas 	= document.querySelector('canvas');
 	var initAlpha, alpha, steeringAngle, speedAngle;

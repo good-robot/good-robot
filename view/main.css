@@ -10,6 +10,10 @@ body, h1, h2 {
 	font-family: 'Bebas Neue', cursive;
 }
 
+h1, h2 {
+	text-align: center;
+}
+
 .welcome main {
 	display: flex;
 	justify-content: center;
@@ -31,17 +35,17 @@ body, h1, h2 {
 	z-index: -1;;
 }
 
-@media(max-width:500px)
+@media(min-width:500px)
 {
 		.welcome .bg-logo {
-        animation: rotateBig 1s infinite;
+			animation-name: rotateBig;
     }
 }
 
 
 @keyframes rotate {
-	0%   { transform: scale(3) rotate(0deg); }
-	100%   { transform: scale(3) rotate(359deg); }
+	0%   { transform: rotate(0deg); }
+	100%   { transform: rotate(359deg); }
 }
 
 @keyframes rotateBig {
@@ -56,7 +60,19 @@ body, h1, h2 {
 	top: initial;
 }
 
+@media(min-width:500px)
+{
+		.welcome .bg-logo--bottom {
+			animation-name: antirotateBig;
+    }
+}
+
 @keyframes antirotate {
+	0%   { transform: rotate(0deg); }
+	100%   { transform: rotate(-359deg); }
+}
+
+@keyframes antirotateBig {
 	0%   { transform: scale(4) rotate(0deg); }
 	100%   { transform: scale(4) rotate(-359deg); }
 }

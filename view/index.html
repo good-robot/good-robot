@@ -66,11 +66,14 @@
 			animateCSS('#name-form', 'fadeInUp');
 
 			$(document).ready(function() {
-				var goFS = document.getElementById("goFS");
 
-				// goFS.addEventListener("click", function() {
-				// 		document.body.requestFullscreen();
-				// }, false);
+				if (window.innerWidth < 1000) {
+					var goFS = document.getElementById("goFS");
+
+					goFS.addEventListener("click", function() {
+							document.body.requestFullscreen();
+					}, false);
+				}
 
 				var $btn = $('#name-form .btn');
 				var $input = $('#name-form input');

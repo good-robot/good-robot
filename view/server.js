@@ -7,6 +7,7 @@ userLog = 'userlog.txt'
 const WebSocket = require('ws');
 const express =  require('express')
 const app = express()
+var path = require('path');
 
 //serve static stuff from public folder
 //app.use(express.static('public'))

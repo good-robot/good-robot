@@ -421,6 +421,6 @@ function clamp_value(value, min, max)
 {
 	if (value > max) return max;
 	if (value < min) return min;
-	var intvalue = Math.trunc( value );
+	var intvalue = Math.floor( value );
 	return intvalue;
 }

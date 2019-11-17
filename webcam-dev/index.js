@@ -37,7 +37,6 @@ const ROBOT_GOOD = 'good'
 console.log('ENV: ', process.env.PI);
 process.env.PI = process.env.PI || false;
 
-
 const ROBOT = process.env.ROBOT || ROBOT_GOOD; 
 let SERIAL_ID
 

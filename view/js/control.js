@@ -9,54 +9,58 @@ if(window.location.protocol === 'http:') {
 	wss = "wss://" + window.location.hostname + "/ws";
 }
 
-//socket.io
-const mysocket = io(wss, {
-  path: '/ws'
-});
+var mysocket;
 
-//Long lived frame object
-var last_frame;
-
-//-----------------------------------------
-//	CONNESSION ACKNOWLEDGE
-//-----------------------------------------
-//	Link is initiated by the client
-//	Server sends a welcome message when link is estabilished
-//	Server could send an auth token to keep track of individual clients and login data
-
-mysocket.on('connect', function () {
-	mysocket.send('user');
-
-	socket.on('message', function (msg) {
-	  // my msg
-	  console.log(msg);
+function control_connect() {
+	//socket.io
+	mysocket = io(wss, {
+	  path: '/ws'
 	});
-});
 
-mysocket.on
-(
-	"welcome",
-	(message) =>
-	{
-		console.log("Server websocket connession acknoweldged... " +message.payload);
-	}
-)
+	//Long lived frame object
+	var last_frame;
 
-//-----------------------------------------
-//	SERVER->CLIENT CONTROLS
-//-----------------------------------------
-//	Server can send an async message to dinamically update the page without reloading
-//	This is an example message with the server local date and time in string form
+	//-----------------------------------------
+	//	CONNESSION ACKNOWLEDGE
+	//-----------------------------------------
+	//	Link is initiated by the client
+	//	Server sends a welcome message when link is estabilished
+	//	Server could send an auth token to keep track of individual clients and login data
 
-mysocket.on
-(
-	"server_time",
-	(message) =>
-	{
-		// fill_label( message.server_time );
-		console.log("Server sent his local time... " +message.server_time);
-	}
-)
+	mysocket.on('connect', function () {
+		mysocket.send('user');
+
+		socket.on('message', function (msg) {
+		  // my msg
+		  console.log(msg);
+		});
+	});
+
+	mysocket.on
+	(
+		"welcome",
+		(message) =>
+		{
+			console.log("Server websocket connession acknoweldged... " +message.payload);
+		}
+	)
+
+	//-----------------------------------------
+	//	SERVER->CLIENT CONTROLS
+	//-----------------------------------------
+	//	Server can send an async message to dinamically update the page without reloading
+	//	This is an example message with the server local date and time in string form
+
+	mysocket.on
+	(
+		"server_time",
+		(message) =>
+		{
+			// fill_label( message.server_time );
+			console.log("Server sent his local time... " +message.server_time);
+		}
+	)
+} 
 
 //-----------------------------------------
 //	CLIENT->SERVER CONTROLS

@@ -15,7 +15,7 @@ function control_connect() {
 
 	console.log('Ben is the best');
 	//socket.io
-	mysocket = io('https://goodrobot.live' {
+	mysocket = io('https://goodrobot.live', {
 	  path: '/ws'
 	});
 

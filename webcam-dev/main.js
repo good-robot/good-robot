@@ -2575,6 +2575,7 @@ $(document).ready(function() {
 	var initAlpha, alpha, steeringAngle, speedAngle;
 
 	window.addEventListener("deviceorientation", function(event) {
+		console.log(event);
 		if (!video || !canvas) {
 			video = document.querySelector('video');
 			canvas = document.querySelector('canvas');
@@ -2587,7 +2588,7 @@ $(document).ready(function() {
 			}
 
 			steeringAngle = parseFloat(alpha) - parseFloat(initAlpha);
-
+			console.log(steeringAngle);
 			if (steeringAngle > 180) {
 				steeringAngle -= 180;
 				video.style.transform = "rotate(" + String(-steeringAngle) + "deg)";

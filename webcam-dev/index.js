@@ -115,8 +115,8 @@ console.log(speedRobot);
 //	WEBSOCKET SERVER: CONTROL/FEEDBACK REQUESTS
 //-----------------------------------------------------------------------------------
 //	Handle websocket connection to the client
-
-const io = io('https://goodrobot.live', {
+const i = require('socket.io-client');
+const io = i('https://goodrobot.live', {
   path: '/ws'
 });
 

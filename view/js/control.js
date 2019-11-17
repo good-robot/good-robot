@@ -27,14 +27,15 @@ function control_connect() {
 	//	Server sends a welcome message when link is estabilished
 	//	Server could send an auth token to keep track of individual clients and login data
 
-	mysocket.on('connect', function () {
-		mysocket.send('user');
-
-		socket.on('message', function (msg) {
-		  // my msg
-		  console.log(msg);
-		});
-	});
+	mysocket.on
+	(
+		'connection',
+		(socket) => 
+		{
+			console.log('connected to websocket server');
+	  		mysocket.send('user');
+		}
+	)
 
 	mysocket.on
 	(
@@ -61,7 +62,7 @@ function control_connect() {
 		}
 	)
 
-	
+
 	//-----------------------------------------
 	//	CLIENT->SERVER CONTROLS
 	//-----------------------------------------
@@ -117,5 +118,5 @@ function control_connect() {
 		}
 	);
 
-	
+
 } 

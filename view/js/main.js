@@ -71,7 +71,7 @@ $(document).ready(function() {
 		timebar.style.width = (time/ROUND_TIME)*100 + "%";
 		time += 1;
 
-		if (ROUND_TIME - time > 10) {
+		if (ROUND_TIME - time < 10) {
 			animateCSS('.timebar-clock', 'shake');
 		}
 

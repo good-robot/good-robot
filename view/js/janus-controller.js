@@ -74,7 +74,6 @@ var feeds = [];
 var bitrateTimer = [];
 
 $(document).ready(function() {
-	$('#start').one('click', function() {
 		// Initialize the library (all console debuggers enabled)
 		Janus.init({debug: "all", callback: function() {
 			// Make sure the browser supports WebRTC
@@ -82,18 +81,13 @@ $(document).ready(function() {
 				bootbox.alert("No WebRTC support... ");
 				return;
 			}
-			user = $('#user').val()
-			if(!user) {
-				bootbox.alert("What's your name?", function() {
-							window.location.reload();
-						});
-			}
+			user = localStorage.getItem("username") || "RandomJunctionUser";
 			// Create session
 			janus = new Janus(
 				{
 					server: server,
 					success: function() {
-						
+
 						//connect to websocket controller
 						control_connect();
 
@@ -553,7 +547,6 @@ $(document).ready(function() {
 					}
 				});
 		}});
-	});
 });
 
 function updateStreamsList(callbacks) {

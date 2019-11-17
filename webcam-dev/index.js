@@ -43,7 +43,7 @@ let SERIAL_ID
 if (ROBOT === ROBOT_GOOD) SERIAL_ID = "/dev/ttyUSB0"
 else if (ROBOT === ROBOT_ROVER) SERIAL_ID = "/dev/ttyACM0"
 
-console.log("Have fun driving the " + ROBOT + " robot!");
+console.log("Have fun driving the " + ROBOT + " robot!!!!!!");
 
 var steerRobot = function(angle){}
 var speedRobot = function(angle){}

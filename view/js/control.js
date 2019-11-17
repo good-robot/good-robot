@@ -114,41 +114,41 @@ function bindTouchKeys(webSocket) {
 		console.log("Speed angle ", speedAngle);
 	}
 
-	$(document).keyup(function(e) {
-		sendKey(false, e.key, webSocket)
-	});
+	// $(document).keyup(function(e) {
+	// 	sendKey(false, e.key, webSocket)
+	// });
 
-	$(document).keydown(function(e) {
-		sendKey(true, e.key, webSocket)
-	});
-	//shims to allow clicks of arrow icons to trigger key events
-	$('#w').on('touchstart', function(){
-		sendKey(true, 'w', webSocket)
-	})
-	$('#w').on('touchend', function(){
-		sendKey(false, 'w', webSocket)
-	})
+	// $(document).keydown(function(e) {
+	// 	sendKey(true, e.key, webSocket)
+	// });
+	// //shims to allow clicks of arrow icons to trigger key events
+	// $('#w').on('touchstart', function(){
+	// 	sendKey(true, 'w', webSocket)
+	// })
+	// $('#w').on('touchend', function(){
+	// 	sendKey(false, 'w', webSocket)
+	// })
 
-	$('#a').on('touchstart', function(){
-		sendKey(true, 'a', webSocket)
-	})
-	$('#a').on('touchend', function(){
-		sendKey(false, 'a', webSocket)
-	})
+	// $('#a').on('touchstart', function(){
+	// 	sendKey(true, 'a', webSocket)
+	// })
+	// $('#a').on('touchend', function(){
+	// 	sendKey(false, 'a', webSocket)
+	// })
 
-	$('#s').on('touchstart', function(){
-		sendKey(true, 's', webSocket)
-	})
-	$('#s').on('touchend', function(){
-		sendKey(false, 's', webSocket)
-	})
+	// $('#s').on('touchstart', function(){
+	// 	sendKey(true, 's', webSocket)
+	// })
+	// $('#s').on('touchend', function(){
+	// 	sendKey(false, 's', webSocket)
+	// })
 
-	$('#d').on('touchstart', function(){
-		sendKey(true, 'd', webSocket)
-	})
-	$('#d').on('touchend', function(){
-		sendKey(false, 'd', webSocket)
-	})
+	// $('#d').on('touchstart', function(){
+	// 	sendKey(true, 'd', webSocket)
+	// })
+	// $('#d').on('touchend', function(){
+	// 	sendKey(false, 'd', webSocket)
+	// })
 }
 
 

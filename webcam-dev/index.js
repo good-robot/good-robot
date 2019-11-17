@@ -22,10 +22,12 @@ var websocket_stream_port = 8082;
 var file_index_name = "index.html";
 var file_css_name = "style.css";
 var file_jsplayer_name = "jsmpeg.min.js";
+var file_main_name = "main.js";
 //Http and css files loaded into memory for fast access
 var file_index;
 var file_css;
 var file_jsplayer;
+var file_main;
 //Name of the local video stream
 var stream_name = "mystream";
 
@@ -171,6 +173,7 @@ http.listen
 		file_index = load_file( file_index_name );
 		file_css = load_file( file_css_name );
 		file_jsplayer = load_file( file_jsplayer_name );
+		file_main = load_file( file_main_name );
 	}
 );
 
@@ -207,6 +210,15 @@ function http_handler(req, res)
 		//Request main page
 		res.writeHead( 200, {"Content-Type": detect_content(file_jsplayer_name),"Content-Length" :file_jsplayer.length} );
 		res.write(file_jsplayer);
+		res.end();
+
+		console.log("INFO: Serving file: " +req.url);
+	}
+	else if (req.url == ("/" +file_main_name))
+	{
+		//Request main page
+		res.writeHead( 200, {"Content-Type": detect_content('main.js'),"Content-Length" :file_main.length} );
+		res.write(file_main);
 		res.end();
 
 		console.log("INFO: Serving file: " +req.url);

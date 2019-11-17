@@ -7,7 +7,7 @@ var http = require("http").createServer(http_handler);
 //url library. Used to process html url requests
 var url = require("url");
 //Websocket used to stream video
-var websocket = require("ws");
+const WebSocket = require('ws');
 
 //-----------------------------------------------------------------------------------
 //	CONFIGURATION

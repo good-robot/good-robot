@@ -128,6 +128,7 @@ function connect() {
   ws.onmessage = function(e) {
     d = JSON.parse(e.data)
     console.log(d)
+    console.log(d.event)
     if(d.event === "steer")
     	steerRobot(d.angle)
     if(d.event === "speed")
@@ -136,7 +137,7 @@ function connect() {
 
   ws.onclose = function(e) {
     console.log('Socket is closed. Stopping rover and reconnecting.', e.reason);
-    stopRover()
+    stopRobot()
     setTimeout(function() {
       connect();
     }, 100);
@@ -420,5 +421,6 @@ function clamp_value(value, min, max)
 {
 	if (value > max) return max;
 	if (value < min) return min;
-	return value;
+	var intvalue = Math.trunc( value );
+	return intvalue;
 }

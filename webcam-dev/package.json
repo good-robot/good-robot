@@ -6,6 +6,9 @@
   "scripts": {
     "mac": "PI=false node index.js & ffmpeg -f avfoundation -framerate 30 -video_size 640x480 -i \"0:none\" -codec:v mpeg1video -tune zerolatency -pix_fmt uyvy422 -f mpegts http://localhost:8080/mystream",
     "pi": "PI=true node index.js & ffmpeg -f v4l2 -framerate 20 -video_size 640x480 -i /dev/video0 -f mpegts -codec:v mpeg1video -s 640x480 -b:v 600k -bf 0 http://localhost:8080/mystream",
+    "pi-rover": "PI=true ROBOT=rover node index.js & #ffmpeg -f v4l2 -framerate 20 -video_size 640x480 -i /dev/video0 -f mpegts -codec:v mpeg1video -s 640x480 -b:v 600k -bf 0 http://localhost:8080/mystream",
+    "pi-good": "PI=true ROBOT=good node index.js & #ffmpeg -f v4l2 -framerate 20 -video_size 640x480 -i /dev/video0 -f mpegts -codec:v mpeg1video -s 640x480 -b:v 600k -bf 0 http://localhost:8080/mystream",
+    "ser": "PI=true node index.js",
     "pi-2": "node index.js & ffmpeg -f v4l2 -framerate 25 -video_size 640x480 -i /dev/video0 -f mpegts -codec:v mpeg1video -s 640x480 -b:v 600k -bf 0 http://localhost:8080/mystream",
     "pi-hq": "node index.js & ffmpeg -f v4l2 -framerate 25 -video_size 1280×720 -i /dev/video0 -f mpegts -codec:v mpeg1video -s 1280×720 -b:v 600k -bf 0 http://localhost:8080/mystream",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,8 +16,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node": "^13.1.0",
-    "nodemon": "^1.19.4",
-    "socket.io": "^2.3.0"
+    "forever": "^1.0.0",
+    "raspi": "^6.0.1",
+    "raspi-serial": "^5.1.2",
+    "socket.io": "^2.3.0",
+    "ws": "^7.2.0"
   }
 }

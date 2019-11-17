@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<style>
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+}
+</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>real life on demand.</title>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/6.4.0/adapter.min.js" ></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js" ></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.1.0/bootbox.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js" ></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.js"></script>
+<script type="text/javascript" src="web-socket.js"></script>
+<script type="text/javascript" src="janus.js" ></script>
+<script type="text/javascript" src="index.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cosmo/bootstrap.min.css" type="text/css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css" type="text/css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.css"/>
+</head>
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="page-header">
+				<h1>sharing is caring</h1>
+				<div id="intro">
+					<p class="bd-lead">hi! i'm <strong style="color:HotPink">princess diana!</strong> i'm a robot you can drive 👾
+					<p>
+					<p class="bd-lead">when i get bigger, i'm gonna clean plastic off the beach 🏖
+					</p>
+					<p class="bd-lead">i'm a little robot but i have big dreams!
+					</p>
+					<p class="bd-lead">what's your name?
+					</p>
+				</div>
+				<div id="name-form">
+					<input type="text" id="user">
+					<button class="btn btn-default" autocomplete="off" id="start">Start</button>
+				</div>
+			</div>
+			<div class="container" id="streams">
+				<div class="row">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">Stream
+								<span class="label label-info hide" id="status"></span>
+								<span class="label label-info hide" id="curbitrate"><span>
+							</h3>
+						</div>
+						<div class="panel-body" id="stream"></div>
+						<div class="panel-body hide" id="drive">
+							<h2 class ="media-heading">drive!</h2>
+							<h3 class ="noselect" id = 'w'>&#8593; w</h3>
+							<h3 class ="noselect" id = 's'>&#8595; s</h3>
+							<h3 class ="noselect" id = 'a'>&#8592; a</h3>
+							<h3 class ="noselect" id = 'd'>&#8594; d</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="container hide" id="videos">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Local Video <span class="label label-primary hide" id="publisher"></span>
+									<div class="btn-group btn-group-xs pull-right hide">
+										<div class="btn-group btn-group-xs">
+											<button id="bitrateset" autocomplete="off" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+												Bandwidth<span class="caret"></span>
+											</button>
+											<ul id="bitrate" class="dropdown-menu" role="menu">
+												<li><a href="#" id="0">No limit</a></li>
+												<li><a href="#" id="128">Cap to 128kbit</a></li>
+												<li><a href="#" id="256">Cap to 256kbit</a></li>
+												<li><a href="#" id="512">Cap to 512kbit</a></li>
+												<li><a href="#" id="1024">Cap to 1mbit</a></li>
+												<li><a href="#" id="1500">Cap to 1.5mbit</a></li>
+												<li><a href="#" id="2000">Cap to 2mbit</a></li>
+											</ul>
+										</div>
+									</div>
+								</h3>
+							</div>
+							<div class="panel-body" id="videolocal"></div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Remote Video #1 <span class="label label-info hide" id="remote1"></span></h3>
+							</div>
+							<div class="panel-body relative" id="videoremote1"></div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Remote Video #2 <span class="label label-info hide" id="remote2"></span></h3>
+							</div>
+							<div class="panel-body relative" id="videoremote2"></div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Remote Video #3 <span class="label label-info hide" id="remote3"></span></h3>
+							</div>
+							<div class="panel-body relative" id="videoremote3"></div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Remote Video #4 <span class="label label-info hide" id="remote4"></span></h3>
+							</div>
+							<div class="panel-body relative" id="videoremote4"></div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Remote Video #5 <span class="label label-info hide" id="remote5"></span></h3>
+							</div>
+							<div class="panel-body relative" id="videoremote5"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<hr>
+	<div class="footer">
+	</div>
+</div>
+
+</body>
+</html>

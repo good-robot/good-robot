@@ -3,11 +3,11 @@ var os = require("os");
 //file system library. Used to load file stored inside back end server (https://nodejs.org/api/fs.html)
 var fs = require("fs");
 //http system library. Handles basic html requests
-var http = require("http").createServer(http_handler);
+//var http = require("http").createServer(http_handler);
 //url library. Used to process html url requests
 var url = require("url");
 //Websocket used to stream video
-var websocket = require("ws");
+const WebSocket = require('ws');
 
 //-----------------------------------------------------------------------------------
 //	CONFIGURATION
@@ -40,10 +40,10 @@ process.env.PI = process.env.PI || false;
 const ROBOT = process.env.ROBOT || ROBOT_GOOD; 
 let SERIAL_ID
 
-if (ROBOT == ROBOT_GOOD) SERIAL_ID = "/dev/ttyUSB0"
-else if (ROBOT == ROBOT_ROVER) SERIAL_ID = "/dev/ttyACM0"
+if (ROBOT === ROBOT_GOOD) SERIAL_ID = "/dev/ttyUSB0"
+else if (ROBOT === ROBOT_ROVER) SERIAL_ID = "/dev/ttyACM0"
 
-console.log("Have fun driving the " + ROBOT + " robot!");
+console.log("Have fun driving the " + ROBOT + " robot!!!!!!");
 
 var steerRobot = function(angle){}
 var speedRobot = function(angle){}
@@ -61,43 +61,33 @@ if(process.env.PI === "true"){
 		serial.open(() => {
 			console.log('successfully opened serial port to ' + ROBOT);
 			stopRobot = function() {
-				if (ROBOT == ROBOT_GOOD) {
+				if (ROBOT === ROBOT_GOOD) {
 					console.log('SER: speed ' + 0 + '\r');
 					serial.write('speed ' + 0 + '\r');
 				}
-				else if (ROBOT == ROBOT_ROVER) {
-					console.log('SER: x');
-					serial.write('x')
+				else if (ROBOT === ROBOT_ROVER) {
+					console.log('SER: speed ' + 0 + '\r');
+					serial.write('speed ' + 0 + '\r');
 				}
 			}
 			steerRobot = function(angle) {
-				if (ROBOT == ROBOT_GOOD) {
+				if (ROBOT === ROBOT_GOOD) {
 					console.log('SER: steer ' + clamp_value(angle, -90, 90) + '\r');
 					serial.write('steer ' + clamp_value(angle, -90, 90) + '\r');
 				}
-				else if (ROBOT == ROBOT_ROVER) {
-					if (angle < 0) {
-						console.log('SER: a');
-						serial.write('a')
-					} else if (angle > 0) {
-						console.log('SER: d');
-						serial.write('d')
-					}
+				else if (ROBOT === ROBOT_ROVER) {
+					console.log('SER: steer ' + clamp_value(angle, -90, 90) + '\r');
+					serial.write('steer ' + clamp_value(angle, -90, 90) + '\r');
 				}
 			}
 			speedRobot = function(angle) {
-				if (ROBOT == ROBOT_GOOD) {
+				if (ROBOT === ROBOT_GOOD) {
+					console.log('SER: speed ' + clamp_value(angle, -35, 35) + '\r');
+					serial.write('speed ' + clamp_value(angle, -35, 35) + '\r');
+				}
+				else if (ROBOT === ROBOT_ROVER) {
 					console.log('SER: speed ' + clamp_value(angle, -90, 90) + '\r');
 					serial.write('speed ' + clamp_value(angle, -90, 90) + '\r');
-				}
-				else if (ROBOT == ROBOT_ROVER) {
-					if (angle < 0) {
-						console.log('SER: w');
-						serial.write('s')
-					} else if (angle > 0) {
-						console.log('SER: s');
-						serial.write('w')
-					}
 				}
 			}
 		});
@@ -114,97 +104,43 @@ console.log(speedRobot);
 //	WEBSOCKET SERVER: CONTROL/FEEDBACK REQUESTS
 //-----------------------------------------------------------------------------------
 //	Handle websocket connection to the client
-const i = require('socket.io-client');
-const io = i('https://goodrobot.live', {
-  path: '/ws'
-});
+const path = 'wss://goodrobot.live/ws'
 
-io.on
-(
-	"connection",
-	function (socket)
-	{
-		console.log("connecting...");
+function connect() {
+  var ws = new WebSocket(path);
 
-		socket.emit("welcome", { payload: "Server says hello" });
+  ws.onopen = function() {
+    console.log('websocket open!');
+    hello = {event: "message", message: "pi connected!"};
+    ws.send(JSON.stringify(hello));
+  }
 
-		//Periodically send the current server time to the client in string form
-		setInterval
-		(
-			function()
-			{
-				socket.emit("server_time", { server_time: get_server_time() });
-			},
-			//Send every 333ms
-			333
-		);
+  ws.onmessage = function(e) {
+    d = JSON.parse(e.data)
+    console.log(d)
+    console.log(d.event)
+    if(d.event === "steer")
+    	steerRobot(d.angle)
+    if(d.event === "speed")
+    	speedRobot(d.angle)
+  }
 
-		socket.on
-		(
-			"myclick",
-			function (data)
-			{
-				timestamp_ms = get_timestamp_ms();
-				socket.emit("profile_ping", { timestamp: timestamp_ms });
-				console.log("button event: " +" client says: " +data.payload);
-			}
-		);
+  ws.onclose = function(e) {
+    console.log('Socket is closed. Stopping rover and reconnecting.', e.reason);
+    stopRobot()
+    setTimeout(function() {
+      connect();
+    }, 100);
+  }
 
-		//////////////////
-		// ROBOT STEERING INTERFACE
-		//////////////////
-		socket.on
-		(
-			"steering",
-			function (data)
-			{
-				console.log('steer ' + data.payload);
-				const steeringAngle = clamp_value(data.payload, -90, 90);
-				steerRobot(steeringAngle);
-			}
-		);
-		socket.on
-		(
-			"speed",
-			function (data)
-			{
-				const speedAngle = clamp_value(data.payload, -90, 90);
-				speedRobot(speedAngle);
-			}
-		);
-		socket.on
-		(
-			"stop",
-			function (data)
-			{
-				console.log("STOP!");
-				stopRobot();
-			}
-		);
-		// socket.on
-		// (
-		// 	"keyboard",
-		// 	function (data)
-		// 	{
-		// 		timestamp_ms = get_timestamp_ms();
-		// 		socket.emit("profile_ping", { timestamp: timestamp_ms });
-		// 		console.log("keyboard event: " +" client says: " +data.payload);
-		// 	}
-		// );
+  ws.onerror = function(err) {
+    console.error('Socket encountered error: ', err.message, 'Closing socket');
+    ws.close();
+  };
+}
 
-		//profile packets from the client are answer that allows to compute roundway trip time
-		// socket.on
-		// (
-		// 	"profile_pong",
-		// 	function (data)
-		// 	{
-		// 		timestamp_ms_pong = get_timestamp_ms();
-		// 		timestamp_ms_ping = data.timestamp;
-		// 		console.log("Pong received. Round trip time[ms]: " +(timestamp_ms_pong -timestamp_ms_ping));
-		// 	}
-		// );
-	}
-);
+connect();
+
 
 
 //-----------------------------------------------------------------------------------
@@ -255,142 +191,142 @@ Object.keys(ifaces).forEach
 //	Fetch and serves local files to client
 
 //Create http server and listen to the given port
-http.listen
-(
-	server_port,
-	function( )
-	{
-		console.log('INFO: ' +server_ip +' listening to html requests on port ' +server_port);
-		//Pre-load http, css and js files into memory to improve http request latency
-		file_index = load_file( file_index_name );
-		file_css = load_file( file_css_name );
-		file_jsplayer = load_file( file_jsplayer_name );
-	}
-);
+// http.listen
+// (
+// 	server_port,
+// 	function( )
+// 	{
+// 		console.log('INFO: ' +server_ip +' listening to html requests on port ' +server_port);
+// 		//Pre-load http, css and js files into memory to improve http request latency
+// 		file_index = load_file( file_index_name );
+// 		file_css = load_file( file_css_name );
+// 		file_jsplayer = load_file( file_jsplayer_name );
+// 	}
+// );
 
 //-----------------------------------------------------------------------------------
 //	HTTP REQUESTS HANDLER
 //-----------------------------------------------------------------------------------
 //	Answer to client http requests. Serve http, css and js files
 
-function http_handler(req, res)
-{
-	//If client asks for root
-	if (req.url == '/')
-	{
-		//Request main page
-		res.writeHead( 200, {"Content-Type": detect_content(file_index_name),"Content-Length":file_index.length} );
-		res.write(file_index);
-		res.end();
+// function http_handler(req, res)
+// {
+// 	//If client asks for root
+// 	if (req.url == '/')
+// 	{
+// 		//Request main page
+// 		res.writeHead( 200, {"Content-Type": detect_content(file_index_name),"Content-Length":file_index.length} );
+// 		res.write(file_index);
+// 		res.end();
 
-		console.log("INFO: Serving file: " +req.url);
-	}
-	//If client asks for css file
-	else if (req.url == ("/" +file_css_name))
-	{
-		//Request main page
-		res.writeHead( 200, {"Content-Type": detect_content(file_css_name),"Content-Length" :file_css.length} );
-		res.write(file_css);
-		res.end();
+// 		console.log("INFO: Serving file: " +req.url);
+// 	}
+// 	//If client asks for css file
+// 	else if (req.url == ("/" +file_css_name))
+// 	{
+// 		//Request main page
+// 		res.writeHead( 200, {"Content-Type": detect_content(file_css_name),"Content-Length" :file_css.length} );
+// 		res.write(file_css);
+// 		res.end();
 
-		console.log("INFO: Serving file: " +req.url);
-	}
-	//If client asks for css file
-	else if (req.url == ("/" +file_jsplayer_name))
-	{
-		//Request main page
-		res.writeHead( 200, {"Content-Type": detect_content(file_jsplayer_name),"Content-Length" :file_jsplayer.length} );
-		res.write(file_jsplayer);
-		res.end();
+// 		console.log("INFO: Serving file: " +req.url);
+// 	}
+// 	//If client asks for css file
+// 	else if (req.url == ("/" +file_jsplayer_name))
+// 	{
+// 		//Request main page
+// 		res.writeHead( 200, {"Content-Type": detect_content(file_jsplayer_name),"Content-Length" :file_jsplayer.length} );
+// 		res.write(file_jsplayer);
+// 		res.end();
 
-		console.log("INFO: Serving file: " +req.url);
-	}
-	//Listening to the port the stream from ffmpeg will flow into
-	else if (req.url = "/mystream")
-	{
-		res.connection.setTimeout(0);
+// 		console.log("INFO: Serving file: " +req.url);
+// 	}
+// 	//Listening to the port the stream from ffmpeg will flow into
+// 	else if (req.url = "/mystream")
+// 	{
+// 		res.connection.setTimeout(0);
 
-		console.log( "Stream Connected: " +req.socket.remoteAddress + ":" +req.socket.remotePort );
+// 		console.log( "Stream Connected: " +req.socket.remoteAddress + ":" +req.socket.remotePort );
 
-		req.on
-		(
-			"data",
-			function(data)
-			{
-				streaming_websocket.broadcast(data);
-			}
-		);
+// 		req.on
+// 		(
+// 			"data",
+// 			function(data)
+// 			{
+// 				streaming_websocket.broadcast(data);
+// 			}
+// 		);
 
-		req.on
-		(
-			"end",
-			function()
-			{
-				console.log("local stream has ended");
-				if (req.socket.recording)
-				{
-					req.socket.recording.close();
-				}
-			}
-		);
+// 		req.on
+// 		(
+// 			"end",
+// 			function()
+// 			{
+// 				console.log("local stream has ended");
+// 				if (req.socket.recording)
+// 				{
+// 					req.socket.recording.close();
+// 				}
+// 			}
+// 		);
 
-	}
-	//If client asks for an unhandled path
-	else
-	{
-		res.end();
-		console.log("ERR: Invalid file request" +req.url);
-	}
-}
+// 	}
+// 	//If client asks for an unhandled path
+// 	else
+// 	{
+// 		res.end();
+// 		console.log("ERR: Invalid file request" +req.url);
+// 	}
+// }
 
-//-----------------------------------------------------------------------------------
-//	WEBSOCKET SERVER: STREAMING VIDEO
-//-----------------------------------------------------------------------------------
+// //-----------------------------------------------------------------------------------
+// //	WEBSOCKET SERVER: STREAMING VIDEO
+// //-----------------------------------------------------------------------------------
 
-// Websocket Server
-var streaming_websocket = new websocket.Server({port: websocket_stream_port, perMessageDeflate: false});
+// // Websocket Server
+// var streaming_websocket = new websocket.Server({port: websocket_stream_port, perMessageDeflate: false});
 
-streaming_websocket.connectionCount = 0;
+// streaming_websocket.connectionCount = 0;
 
-streaming_websocket.on
-(
-	"connection",
-	function(socket, upgradeReq)
-	{
-		streaming_websocket.connectionCount++;
-		console.log
-		(
-			'New websocket Connection: ',
-			(upgradeReq || socket.upgradeReq).socket.remoteAddress,
-			(upgradeReq || socket.upgradeReq).headers['user-agent'],
-			'('+streaming_websocket.connectionCount+" total)"
-		);
+// streaming_websocket.on
+// (
+// 	"connection",
+// 	function(socket, upgradeReq)
+// 	{
+// 		streaming_websocket.connectionCount++;
+// 		console.log
+// 		(
+// 			'New websocket Connection: ',
+// 			(upgradeReq || socket.upgradeReq).socket.remoteAddress,
+// 			(upgradeReq || socket.upgradeReq).headers['user-agent'],
+// 			'('+streaming_websocket.connectionCount+" total)"
+// 		);
 
-		socket.on
-		(
-			'close',
-			function(code, message)
-			{
-				streaming_websocket.connectionCount--;
-				console.log('Disconnected websocket ('+streaming_websocket.connectionCount+' total)');
-			}
-		);
-	}
-);
+// 		socket.on
+// 		(
+// 			'close',
+// 			function(code, message)
+// 			{
+// 				streaming_websocket.connectionCount--;
+// 				console.log('Disconnected websocket ('+streaming_websocket.connectionCount+' total)');
+// 			}
+// 		);
+// 	}
+// );
 
-streaming_websocket.broadcast = function(data)
-{
-	streaming_websocket.clients.forEach
-	(
-		function each(client)
-		{
-			if (client.readyState === websocket.OPEN)
-			{
-				client.send(data);
-			}
-		}
-	);
-};
+// streaming_websocket.broadcast = function(data)
+// {
+// 	streaming_websocket.clients.forEach
+// 	(
+// 		function each(client)
+// 		{
+// 			if (client.readyState === websocket.OPEN)
+// 			{
+// 				client.send(data);
+// 			}
+// 		}
+// 	);
+// };
 
 
 //-----------------------------------------------------------------------------------
@@ -471,9 +407,11 @@ function detect_content( file_name )
 	}
 }
 
-function clamp_value(value, min, max)
+function clamp_value(value, min, max, zero = 10)
 {
 	if (value > max) return max;
 	if (value < min) return min;
-	return value;
+	if (value > abs(zero)) return 0;
+	var intvalue = Math.floor( value );
+	return intvalue;
 }

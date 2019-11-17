@@ -59,35 +59,6 @@ var socket_speed_handler = function (speedAngle){};
 
 function unbindTouchKeys() {
 	console.log('unbinding key events')
-	$(document).unbind('keyup');
-	$(document).unbind('keydown');
-	$('#w').on('touchstart', function(){
-		
-	})
-	$('#w').on('touchend', function(){
-		
-	})
-
-	$('#a').on('touchstart', function(){
-		
-	})
-	$('#a').on('touchend', function(){
-		
-	})
-
-	$('#s').on('touchstart', function(){
-		
-	})
-	$('#s').on('touchend', function(){
-
-	})
-
-	$('#d').on('touchstart', function(){
-
-	})
-	$('#d').on('touchend', function(){
-
-	})
 
 	socket_steering_handler = function (steeringAngle) {};
 	socket_speed_handler = function (speedAngle){};
@@ -102,53 +73,17 @@ function bindTouchKeys(webSocket) {
 	socket_steering_handler = function (steeringAngle)
 	{
 		// steeringAngle must be in [-90, 90]
-		json = JSON.stringify("steering", { payload: steeringAngle })
+		json = JSON.stringify({event: "steer", angle: steeringAngle})
 		webSocket.send(json);
 		console.log("Steering angle ", steeringAngle);
 	}
 	socket_speed_handler = function (speedAngle)
 	{
 		// steeringAngle must be in [-90, 90]
-		json = JSON.stringify("speed", { payload: speedAngle })
+		json = JSON.stringify({event: "speed", angle: speedAngle})
 		webSocket.send(json);
 		console.log("Speed angle ", speedAngle);
 	}
-
-	$(document).keyup(function(e) {
-		sendKey(false, e.key, webSocket)
-	});
-
-	$(document).keydown(function(e) {
-		sendKey(true, e.key, webSocket)
-	});
-	//shims to allow clicks of arrow icons to trigger key events
-	$('#w').on('touchstart', function(){
-		sendKey(true, 'w', webSocket)
-	})
-	$('#w').on('touchend', function(){
-		sendKey(false, 'w', webSocket)
-	})
-
-	$('#a').on('touchstart', function(){
-		sendKey(true, 'a', webSocket)
-	})
-	$('#a').on('touchend', function(){
-		sendKey(false, 'a', webSocket)
-	})
-
-	$('#s').on('touchstart', function(){
-		sendKey(true, 's', webSocket)
-	})
-	$('#s').on('touchend', function(){
-		sendKey(false, 's', webSocket)
-	})
-
-	$('#d').on('touchstart', function(){
-		sendKey(true, 'd', webSocket)
-	})
-	$('#d').on('touchend', function(){
-		sendKey(false, 'd', webSocket)
-	})
 }
 
 

@@ -106,6 +106,9 @@ $(document).ready(function() {
 					success: function() {
 						//socket.io
 						var socket = io(wss);
+						const socket = io(wss, {
+						  path: '/ws'
+						});
 						  socket.on('connect', function () {
 						    socket.send('hi');
 						    socket.send('user');

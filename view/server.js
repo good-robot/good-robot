@@ -10,7 +10,9 @@ const app = express()
 var path = require('path');
 
 //serve static stuff from public folder
-//app.use(express.static('public'))
+app.use(express.static('js'))
+app.use(express.static('assets'))
+app.use(express.static('data'))
 
 // viewed at http://localhost:8080
 app.get('/', function(req, res) {
